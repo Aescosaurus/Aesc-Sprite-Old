@@ -166,8 +166,8 @@ void ImageHandler::Draw( Graphics& gfx ) const
 void ImageHandler::CenterImage()
 {
 	// TODO: Fix this.
-	const Surface surf = artProxy.GetExpandedBy( Vei2( scale ) );
-	const auto surfRect = surf.GetRect();
-	artPos.x = clipArea.GetWidth() / 2 - surfRect.GetWidth() / 2;
-	artPos.y = clipArea.GetHeight() / 2 - surfRect.GetHeight() / 2;
+	// const Surface surf = artProxy.GetExpandedBy( Vei2( scale ) );
+	// const auto surfRect = surf.GetRect();
+	// artPos.x = clipArea.GetWidth() / 2 - surfRect.GetWidth() / 2;
+	// artPos.y = clipArea.GetHeight() / 2 - surfRect.GetHeight() / 2;
 }

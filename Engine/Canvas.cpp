@@ -3,14 +3,15 @@
 Canvas::Canvas()
 	:
 	pal( "Palettes/Default.bmp" ),
-	imgHand( screenArea )
+	imgHand( screenArea ),
+	toolHand( curTool )
 {}
 
 void Canvas::Update( Mouse& mouse,const Keyboard& kbd )
 {
 	pal.Update( mouse );
 	imgHand.Update( mouse,kbd,curTool,mainCol,offCol );
-	toolHand.Update( mouse,kbd,curTool,mainCol,offCol );
+	toolHand.Update( mouse,kbd,mainCol,offCol );
 }
 
 void Canvas::Draw( Graphics& gfx ) const

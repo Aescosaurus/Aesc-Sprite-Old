@@ -1,8 +1,14 @@
 #include "ToolHandler.h"
+#include "SpriteEffect.h"
+#include <cassert>
+
+ToolHandler::ToolHandler( ToolMode& tool )
+	:
+	tool( tool )
+{}
 
 void ToolHandler::Update( const Mouse& mouse,
-	const Keyboard& kbd,ToolMode& tool,
-	Color& main,Color& off )
+	const Keyboard& kbd,Color& main,Color& off )
 {
 	if( kbd.KeyIsPressed( 'B' ) )
 	{
@@ -33,8 +39,41 @@ void ToolHandler::Update( const Mouse& mouse,
 		}
 	}
 	else pressingSwap = false;
+
+	if( kbd.KeyIsPressed( 'D' ) )
+	{
+		main = Colors::Black;
+		off = Colors::White;
+	}
+
+	// Button stuff.
+	if( brush.Update( mouse ) ) tool = ToolMode::Brush;
+	if( eraser.Update( mouse ) ) tool = ToolMode::Eraser;
+	if( hand.Update( mouse ) ) tool = ToolMode::Hand;
 }
 
 void ToolHandler::Draw( Graphics& gfx ) const
 {
+	gfx.DrawSprite( 50,1,GetToolSurf( tool ),
+		SpriteEffect::Chroma{ Colors::Magenta } );
+
+	brush.Draw( gfx );
+	eraser.Draw( gfx );
+	hand.Draw( gfx );
+}
+
+const Surface& ToolHandler::GetToolSurf( ToolMode tool ) const
+{
+	switch( tool )
+	{
+	case ToolMode::Brush:
+		return( brushImg );
+	case ToolMode::Eraser:
+		return( eraserImg );
+	case ToolMode::Hand:
+		return( handImg );
+	default:
+		assert( false );
+		break;
+	}
 }

@@ -63,6 +63,7 @@ public:
 	void PutPixel( int x,int y,Color c );
 	void PutPixel( int x,int y,Color c,unsigned char alpha );
 	void PutPixel( int x,int y,Color c,float alpha );
+	void PutPixelAlpha( int x,int y,Color c,float alpha );
 	void DrawRect( int x,int y,int width,int height,Color c );
 	void DrawRectDim( int x1,int y1,int x2,int y2,Color c );
 	void DrawCircle( int x,int y,int radius,Color c );
@@ -71,14 +72,14 @@ public:
 	template<typename R>
 	void DrawHitbox( const Rect_<R>& hitbox,Color c = { 255,160,0 } )
 	{
-		DrawLineOld( int( hitbox.left ),int( hitbox.top ),
-			int( hitbox.right ),int( hitbox.top ),c );
-		DrawLineOld( int( hitbox.right ),int( hitbox.top ),
-			int( hitbox.right ),int( hitbox.bottom ),c );
-		DrawLineOld( int( hitbox.right ),int( hitbox.bottom ),
-			int( hitbox.left ),int( hitbox.bottom ),c );
-		DrawLineOld( int( hitbox.left ),int( hitbox.bottom ),
-			int( hitbox.left ),int( hitbox.top ),c );
+		DrawLine( { float( hitbox.left ),float( hitbox.top ) },
+			{ float( hitbox.right ),float( hitbox.top ) },c );
+		DrawLine( { float( hitbox.right ),float( hitbox.top ) },
+			{ float( hitbox.right ),float( hitbox.bottom ) },c );
+		DrawLine( { float( hitbox.right ),float( hitbox.bottom ) },
+			{ float( hitbox.left ),float( hitbox.bottom ) },c );
+		DrawLine( { float( hitbox.left ),float( hitbox.bottom ) },
+			{ float( hitbox.left ),float( hitbox.top ) },c );
 	}
 	template<typename E>
 	void DrawSprite( int x,int y,const Surface& s,E effect,bool reversed = false )
@@ -170,6 +171,17 @@ public:
 			}
 		}
 	}
+
+	void JSDrawImage( const Surface& image,int dx,int dy )
+	{
+		JSDrawImage( image,dx,dy,image.GetWidth(),image.GetHeight() );
+	}
+	void JSDrawImage( const Surface& image,int dx,int dy,int dWidth,int dHeight )
+	{
+		JSDrawImage( image,dx,dy,dWidth,dHeight,
+			dx,dy,dWidth,dHeight );
+	}
+	void JSDrawImage( const Surface& image,int sx,int sy,int sWidth,int sHeight,int dx,int dy,int dWidth,int dHeight );
 	~Graphics();
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
