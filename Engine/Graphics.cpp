@@ -25,6 +25,7 @@
 #include <assert.h>
 #include <string>
 #include <array>
+#include "SpriteEffect.h"
 
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
@@ -183,11 +184,11 @@ Graphics::Graphics( HWNDKey& key )
 	const FSQVertex vertices[] =
 	{
 		{ -1.0f,1.0f,0.5f,0.0f,0.0f },
-		{ 1.0f,1.0f,0.5f,1.0f,0.0f },
-		{ 1.0f,-1.0f,0.5f,1.0f,1.0f },
-		{ -1.0f,1.0f,0.5f,0.0f,0.0f },
-		{ 1.0f,-1.0f,0.5f,1.0f,1.0f },
-		{ -1.0f,-1.0f,0.5f,0.0f,1.0f },
+	{ 1.0f,1.0f,0.5f,1.0f,0.0f },
+	{ 1.0f,-1.0f,0.5f,1.0f,1.0f },
+	{ -1.0f,1.0f,0.5f,0.0f,0.0f },
+	{ 1.0f,-1.0f,0.5f,1.0f,1.0f },
+	{ -1.0f,-1.0f,0.5f,0.0f,1.0f },
 	};
 	D3D11_BUFFER_DESC bd = {};
 	bd.Usage = D3D11_USAGE_DEFAULT;
@@ -207,7 +208,7 @@ Graphics::Graphics( HWNDKey& key )
 	const D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
 		{ "POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-		{ "TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 }
+	{ "TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 }
 	};
 
 	// Ignore the intellisense error "namespace has no member"
@@ -384,7 +385,7 @@ void Graphics::DrawCircle( int x,int y,int radius,Color c )
 	}
 }
 
-void Graphics::DrawLine( int x0,int y0,int x1,int y1,Color c )
+void Graphics::DrawLineOld( int x0,int y0,int x1,int y1,Color c )
 {
 	bool steep = ( abs( y1 - y0 ) > abs( x1 - x0 ) );
 
@@ -407,57 +408,43 @@ void Graphics::DrawLine( int x0,int y0,int x1,int y1,Color c )
 		gradient = 1.0;
 	}
 
-	// handle first endpoint
 	float xend = float( round( x0 ) );
 	float yend = y0 + gradient * ( xend - x0 );
 	float xgap = 1 - x0 + 0.5f - floor( x0 + 0.5f );
-	float xpxl1 = xend; // this will be used in the main loop
+	float xpxl1 = xend;
 	float ypxl1 = floor( yend );
 	if( steep )
 	{
-		// plot(ypxl1,   xpxl1, rfpart(yend) * xgap)
-		// plot(ypxl1+1, xpxl1,  fpart(yend) * xgap)
 		PutPixel( int( ypxl1 ),int( xpxl1 ),c,float( 1 - yend - floor( yend ) * xgap ) );
 		PutPixel( int( ypxl1 + 1 ),int( xpxl1 ),c,float( yend - floor( yend ) * xgap ) );
 	}
 	else
 	{
-		// plot(xpxl1, ypxl1  , 1 - yend - floor(yend) * xgap)
-		// plot(xpxl1, ypxl1+1,  yend - floor(yend) * xgap)
 		PutPixel( int( xpxl1 ),int( ypxl1 ),c,float( 1 - yend - floor( yend ) * xgap ) );
 		PutPixel( int( xpxl1 ),int( ypxl1 + 1 ),c,float( yend - floor( yend ) * xgap ) );
 	}
-	float intery = yend + gradient; // first y-intersection for the main loop
+	float intery = yend + gradient;
 
-	// handle second endpoint
 	xend = float( round( x1 ) );
 	yend = y1 + gradient * ( xend - x1 );
 	xgap = x1 + 0.5f - floor( x1 + 0.5f );
-	float xpxl2 = xend; //this will be used in the main loop
+	float xpxl2 = xend;
 	float ypxl2 = floor( yend );
 	if( steep )
 	{
-		// plot( ypxl2,xpxl2,1 - yend - floor( yend ) * xgap )
-		// plot( ypxl2 + 1,xpxl2,yend - floor( yend ) * xgap )
 		PutPixel( int( ypxl2 ),int( xpxl2 ),c,float( 1 - yend - floor( yend ) * xgap ) );
 		PutPixel( int( ypxl2 + 1 ),int( xpxl2 ),c,float( yend - floor( yend ) * xgap ) );
 	}
 	else
 	{
-		// plot( xpxl2,ypxl2,1 - yend - floor( yend ) * xgap )
-		// plot( xpxl2,ypxl2 + 1,yend - floor( yend ) * xgap )
 		PutPixel( int( xpxl2 ),int( ypxl2 ),c,float( 1 - yend - floor( yend ) * xgap ) );
 		PutPixel( int( xpxl2 ),int( ypxl2 + 1 ),c,float( yend - floor( yend ) * xgap ) );
 	}
 
-			// main loop
 	if( steep )
 	{
-		// for x from xpxl1 + 1 to xpxl2 - 1 do
 		for( int x = int( xpxl1 + 1 ); x < int( xpxl2 - 1 ); ++x )
 		{
-			// plot( floor( intery ),x,1 - intery - floor( intery ) )
-			// plot( floor( intery ) + 1,x,intery - floor( intery ) )
 			PutPixel( int( floor( intery ) ),x,c,float( 1 - intery - floor( intery ) ) );
 			PutPixel( int( floor( intery ) + 1 ),x,c,float( intery - floor( intery ) ) );
 			intery = intery + gradient;
@@ -465,11 +452,8 @@ void Graphics::DrawLine( int x0,int y0,int x1,int y1,Color c )
 	}
 	else
 	{
-		// for x from xpxl1 + 1 to xpxl2 - 1 do
 		for( int x = int( xpxl1 + 1 ); x < int( xpxl2 - 1 ); ++x )
 		{
-			// plot( x,floor( intery ),1 - intery - floor( intery ) )
-			// plot( x,floor( intery ) + 1,intery - floor( intery ) )
 			PutPixel( x,int( floor( intery ) ),c,float( 1 - intery - floor( intery ) ) );
 			PutPixel( x,int( floor( intery ) + 1 ),c,float( intery - floor( intery ) ) );
 			intery = intery + gradient;
@@ -477,52 +461,47 @@ void Graphics::DrawLine( int x0,int y0,int x1,int y1,Color c )
 	}
 }
 
-// void Graphics::DrawSprite( int x,int y,const Surface& s,Color chroma )
-// {
-// 	DrawSprite( x,y,s.GetRect(),s,chroma );
-// }
-// 
-// void Graphics::DrawSprite( int x,int y,const RectI& srcRect,const Surface& s,Color chroma )
-// {
-// 	DrawSprite( x,y,srcRect,GetScreenRect(),s,chroma );
-// }
-// 
-// void Graphics::DrawSprite( int x,int y,RectI srcRect,const RectI& clip,const Surface& s,Color chroma )
-// {
-// 	assert( srcRect.left >= 0 );
-// 	assert( srcRect.right <= s.GetWidth() );
-// 	assert( srcRect.top >= 0 );
-// 	assert( srcRect.bottom <= s.GetHeight() );
-// 	if( x < clip.left )
-// 	{
-// 		srcRect.left += clip.left - x;
-// 		x = int( clip.left );
-// 	}
-// 	if( y < clip.top )
-// 	{
-// 		srcRect.top += clip.top - y;
-// 		y = int( clip.top );
-// 	}
-// 	if( x + srcRect.GetWidth() > clip.right )
-// 	{
-// 		srcRect.right -= x + srcRect.GetWidth() - clip.right;
-// 	}
-// 	if( y + srcRect.GetHeight() > clip.bottom )
-// 	{
-// 		srcRect.bottom -= y + srcRect.GetHeight() - clip.bottom;
-// 	}
-// 	for( int sy = int( srcRect.top ); sy < int( srcRect.bottom ); ++sy )
-// 	{
-// 		for( int sx = int( srcRect.left ); sx < int( srcRect.right ); ++sx )
-// 		{
-// 			const Color srcPixel = s.GetPixel( sx,sy );
-// 			if( srcPixel != chroma )
-// 			{
-// 				PutPixel( x + int( sx - srcRect.left ),y + int( sy - srcRect.top ),srcPixel );
-// 			}
-// 		}
-// 	}
-// }
+// Chili version of line drawing (much better).
+void Graphics::DrawLine( Vec2 p0,Vec2 p1,Color c )
+{
+	float m = 0.0f;
+	if( p1.x != p0.x )
+	{
+		m = ( p1.y - p0.y ) / ( p1.x - p0.x );
+	}
+
+	if( p1.x != p0.x && std::abs( m ) <= 1.0f )
+	{
+		if( p0.x > p1.x )
+		{
+			std::swap( p0,p1 );
+		}
+
+		const float b = p0.y - m * p0.x;
+
+		for( int x = int( p0.x ); x < int( p1.x ); x++ )
+		{
+			const float y = m * float( x ) + b;
+			PutPixel( x,int( y ),c );
+		}
+	}
+	else
+	{
+		if( p0.y > p1.y )
+		{
+			std::swap( p0,p1 );
+		}
+
+		const float w = ( p1.x - p0.x ) / ( p1.y - p0.y );
+		const float p = p0.x - w * p0.y;
+
+		for( int y = int( p0.y ); y < int( p1.y ); y++ )
+		{
+			const float x = w * float( y ) + p;
+			PutPixel( int( x ),y,c );
+		}
+	}
+}
 
 
 //////////////////////////////////////////////////

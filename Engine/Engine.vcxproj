@@ -150,7 +150,6 @@
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Palette.h" />
-    <ClInclude Include="Poly.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Resource.h" />
@@ -173,7 +172,6 @@
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Palette.cpp" />
-    <ClCompile Include="Poly.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Surface.cpp">

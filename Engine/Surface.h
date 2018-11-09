@@ -22,6 +22,7 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 	RectI GetRect() const;
+	const std::vector<Color>& GetRawPixelData() const;
 private:
 	// Color * pPixels = nullptr;
 	std::vector<Color> pixels;

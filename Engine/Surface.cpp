@@ -124,3 +124,8 @@ RectI Surface::GetRect() const
 {
 	return{ 0,width,0,height };
 }
+
+const std::vector<Color>& Surface::GetRawPixelData() const
+{
+	return( pixels );
+}
