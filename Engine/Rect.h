@@ -59,7 +59,7 @@ public:
 		top += amount.y;
 		bottom += amount.y;
 	}
-	constexpr Rect_ GetMovedBy( const Vec2_<T>& amount )
+	constexpr Rect_ GetMovedBy( const Vec2_<T>& amount ) const
 	{
 		auto temp = *this;
 		temp.MoveBy( amount );
@@ -79,6 +79,15 @@ public:
 	constexpr Vec2_<T> GetCenter() const
 	{
 		return Vec2_<T>( ( left + right ) / T( 2 ),( top + bottom ) / T( 2 ) );
+	}
+	constexpr Rect_ GetClipped( const Rect_& clip )
+	{
+		Rect_ temp = *this;
+		temp.left = std::max( temp.left,clip.left );
+		temp.top = std::max( temp.top,clip.top );
+		temp.right = std::min( temp.right,clip.right );
+		temp.bottom = std::min( temp.bottom,clip.bottom );
+		return( temp );
 	}
 
 	constexpr T GetWidth() const

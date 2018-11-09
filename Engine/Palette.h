@@ -44,6 +44,6 @@ private:
 	static constexpr int swatchSize = 18;
 	static constexpr int swatchPadding = 4;
 	std::vector<Swatch> swatches;
-	Color mainColor = Colors::White;
-	Color offColor = Colors::Gray;
+	Color mainColor = Colors::Black;
+	Color offColor = Colors::White;
 };

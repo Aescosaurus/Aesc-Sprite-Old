@@ -6,16 +6,35 @@ ImageHandler::ImageHandler( const RectI& clipArea )
 	art( canvSize.x,canvSize.y ),
 	artProxy( canvSize.x,canvSize.y ),
 	clipArea( clipArea ),
-	artPos( { float( clipArea.left ),float( clipArea.top ) } )
+	artPos( { float( clipArea.left ),float( clipArea.top ) } ),
+	bgPattern( clipArea.GetWidth() / bgGrainAmount,
+		clipArea.GetHeight() / bgGrainAmount )
 {
 	for( int y = 0; y < art.GetHeight(); ++y )
 	{
 		for( int x = 0; x < art.GetWidth(); ++x )
 		{
-			art.PutPixel( x,y,Colors::Red );
+			art.PutPixel( x,y,chroma );
 		}
 	}
 	artProxy = art;
+
+	static constexpr Color col1 = Colors::MakeRGB( 255,255,255 );
+	static constexpr Color col2 = Colors::MakeRGB( 204,204,204 );
+	for( int y = 0; y < bgPattern.GetHeight(); ++y )
+	{
+		for( int x = 0; x < bgPattern.GetWidth(); ++x )
+		{
+			if( y % 2 == 0 )
+			{
+				bgPattern.PutPixel( x,y,x % 2 == 0 ? col1 : col2 );
+			}
+			else
+			{
+				bgPattern.PutPixel( x,y,x % 2 == 0 ? col2 : col1 );
+			}
+		}
+	}
 }
 
 void ImageHandler::Update( Mouse& mouse,
@@ -85,6 +104,11 @@ void ImageHandler::Update( Mouse& mouse,
 		{
 			scale /= scaleFactor;
 		}
+
+		if( kbd.KeyIsPressed( '0' ) )
+		{
+			CenterImage();
+		}
 	}
 
 	// Click and drag or use arrow keys to move.
@@ -121,7 +145,29 @@ void ImageHandler::Draw( Graphics& gfx ) const
 {
 	const Surface drawSurf = artProxy.GetExpandedBy( Vei2( scale ) );
 	const auto drawPos = Vei2( artPos );
-	gfx.DrawSprite( drawPos.x,drawPos.y,drawSurf.GetRect(),
+	const auto drawRect = drawSurf.GetRect();
+	// gfx.DrawHitbox( drawRect.GetMovedBy( drawPos ),Colors::Cyan );
+
+	// gfx.DrawSprite( drawPos.x,drawPos.y,
+	// 	drawRect.GetMovedBy( drawPos ),
+	// 	drawRect.GetMovedBy( drawPos ).GetClipped( clipArea ),
+	// 	bgPattern.GetExpandedBy( Vei2{ bgGrainAmount,bgGrainAmount } ),
+	// 	SpriteEffect::Chroma{ Colors::Magenta } );
+	gfx.DrawSprite( drawPos.x,drawPos.y,
+		drawRect,clipArea,
+		bgPattern.GetExpandedBy( Vei2{ bgGrainAmount,bgGrainAmount } ),
+		SpriteEffect::Chroma{ Colors::Magenta } );
+
+	gfx.DrawSprite( drawPos.x,drawPos.y,drawRect,
 		clipArea,drawSurf,
 		SpriteEffect::Chroma{ Colors::Magenta } );
+}
+
+void ImageHandler::CenterImage()
+{
+	// TODO: Fix this.
+	const Surface surf = artProxy.GetExpandedBy( Vei2( scale ) );
+	const auto surfRect = surf.GetRect();
+	artPos.x = clipArea.GetWidth() / 2 - surfRect.GetWidth() / 2;
+	artPos.y = clipArea.GetHeight() / 2 - surfRect.GetHeight() / 2;
 }

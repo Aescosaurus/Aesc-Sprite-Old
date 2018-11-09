@@ -17,6 +17,8 @@ public:
 		const Keyboard& kbd,ToolMode tool,
 		Color main,Color off );
 	void Draw( Graphics& gfx ) const;
+
+	void CenterImage();
 private:
 	static constexpr Vei2 canvSize = { 8,8 };
 	Surface art;
@@ -27,4 +29,6 @@ private:
 	static constexpr Color chroma = Colors::Magenta;
 
 	Vei2 oldMousePos = { 0,0 };
+	static constexpr int bgGrainAmount = 10;
+	Surface bgPattern;
 };
