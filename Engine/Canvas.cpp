@@ -3,12 +3,14 @@
 Canvas::Canvas()
 	:
 	pal( "Palettes/Default.bmp" ),
-	art( canvSize.x,canvSize.y )
+	imgHand( screenArea )
 {}
 
-void Canvas::Update( const Mouse& mouse,const Keyboard& kbd )
+void Canvas::Update( Mouse& mouse,const Keyboard& kbd )
 {
 	pal.Update( mouse );
+	imgHand.Update( mouse,kbd,curTool,mainCol,offCol );
+	toolHand.Update( mouse,kbd,curTool,mainCol,offCol );
 }
 
 void Canvas::Draw( Graphics& gfx ) const
@@ -17,8 +19,11 @@ void Canvas::Draw( Graphics& gfx ) const
 		screenArea.right,screenArea.bottom,
 		Colors::Gray );
 
-	gfx.DrawCircle( 20,20,15,mainCol );
 	gfx.DrawCircle( 35,30,15,offCol );
+	gfx.DrawCircle( 20,20,15,mainCol );
 
 	pal.Draw( gfx );
+
+	imgHand.Draw( gfx );
+	toolHand.Draw( gfx );
 }

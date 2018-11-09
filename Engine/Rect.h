@@ -59,6 +59,12 @@ public:
 		top += amount.y;
 		bottom += amount.y;
 	}
+	constexpr Rect_ GetMovedBy( const Vec2_<T>& amount )
+	{
+		auto temp = *this;
+		temp.MoveBy( amount );
+		return( temp );
+	}
 
 	static constexpr Rect_ FromCenter( const Vec2_<T>& center,
 		T halfWidth,T halfHeight )
