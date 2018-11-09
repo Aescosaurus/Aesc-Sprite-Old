@@ -97,14 +97,24 @@ void ImageHandler::Update( Mouse& mouse,
 	if( kbd.KeyIsPressed( VK_DOWN ) ) artPos.y += speed;
 	if( kbd.KeyIsPressed( VK_LEFT ) ) artPos.x -= speed;
 	if( kbd.KeyIsPressed( VK_RIGHT ) ) artPos.x += speed;
-	if( tool == ToolMode::Hand )
+	if( mouse.LeftIsPressed() )
 	{
-		if( mouse.LeftIsPressed() )
+		switch( tool )
 		{
+		case ToolMode::Hand:
 			artPos += ( mouse.GetPos() - oldMousePos );
+			break;
+		case ToolMode::Zoomer:
+		{
+			static constexpr float scaleFactor = 1.05f;
+			const auto amount = ( mouse.GetPos().x - oldMousePos.x );
+			if( amount > 0 ) scale *= scaleFactor;
+			else if( amount < 0 ) scale /= scaleFactor;
 		}
-		oldMousePos = mouse.GetPos();
+		break;
+		}
 	}
+	oldMousePos = mouse.GetPos();
 }
 
 void ImageHandler::Draw( Graphics& gfx ) const

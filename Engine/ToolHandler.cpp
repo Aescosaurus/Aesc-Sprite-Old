@@ -18,6 +18,11 @@ void ToolHandler::Update( const Mouse& mouse,
 	{
 		tool = ToolMode::Hand;
 	}
+	
+	if( kbd.KeyIsPressed( 'Z' ) )
+	{
+		tool = ToolMode::Zoomer;
+	}
 
 	if( kbd.KeyIsPressed( 'X' ) )
 	{
