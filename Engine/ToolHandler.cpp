@@ -50,6 +50,7 @@ void ToolHandler::Update( const Mouse& mouse,
 	if( brush.Update( mouse ) ) tool = ToolMode::Brush;
 	if( eraser.Update( mouse ) ) tool = ToolMode::Eraser;
 	if( hand.Update( mouse ) ) tool = ToolMode::Hand;
+	if( zoomer.Update( mouse ) ) tool = ToolMode::Zoomer;
 }
 
 void ToolHandler::Draw( Graphics& gfx ) const
@@ -60,6 +61,7 @@ void ToolHandler::Draw( Graphics& gfx ) const
 	brush.Draw( gfx );
 	eraser.Draw( gfx );
 	hand.Draw( gfx );
+	zoomer.Draw( gfx );
 }
 
 const Surface& ToolHandler::GetToolSurf( ToolMode tool ) const
@@ -72,8 +74,10 @@ const Surface& ToolHandler::GetToolSurf( ToolMode tool ) const
 		return( eraserImg );
 	case ToolMode::Hand:
 		return( handImg );
+	case ToolMode::Zoomer:
+		return( zoomerImg );
 	default:
 		assert( false );
-		break;
+		return( brushImg );
 	}
 }

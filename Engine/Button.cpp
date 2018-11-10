@@ -20,10 +20,7 @@ bool Button::Update( const Mouse& mouse )
 		{
 			if( hovering ) pressed = true;
 		}
-		else
-		{
-			canClick = false;
-		}
+		canClick = false;
 	}
 	else canClick = true;
 

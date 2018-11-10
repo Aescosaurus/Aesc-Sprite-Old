@@ -121,7 +121,8 @@ void ImageHandler::Update( Mouse& mouse,
 	if( kbd.KeyIsPressed( VK_DOWN ) ) artPos.y += speed;
 	if( kbd.KeyIsPressed( VK_LEFT ) ) artPos.x -= speed;
 	if( kbd.KeyIsPressed( VK_RIGHT ) ) artPos.x += speed;
-	if( mouse.LeftIsPressed() )
+	if( clipArea.ContainsPoint( mouse.GetPos() ) &&
+		mouse.LeftIsPressed() )
 	{
 		switch( tool )
 		{
