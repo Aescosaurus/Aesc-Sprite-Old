@@ -85,24 +85,29 @@ void ImageHandler::Update( Mouse& mouse,
 				int( mousePos.y ),preview );
 		}
 	}
+	static constexpr float scaleFactor = 1.2f;
+	static constexpr float moveSpeed = 5.5f;
 
 	// Use ctrl + scroll or ctrl + plus/minus to zoom in/out.
-	if( kbd.KeyIsPressed( VK_CONTROL ) )
+	while( !mouse.IsEmpty() )
 	{
-		static constexpr float scaleFactor = 1.2f;
-		while( !mouse.IsEmpty() )
-		{
-			const auto e = mouse.Read();
+		const auto e = mouse.Read();
 			switch( e.GetType() )
 			{
 			case Mouse::Event::Type::WheelUp:
-				scale *= scaleFactor;
+				if( kbd.KeyIsPressed( VK_CONTROL ) ) scale *= scaleFactor;
+				if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x += moveSpeed;
+				else artPos.y += moveSpeed;
 				break;
 			case Mouse::Event::Type::WheelDown:
-				scale /= scaleFactor;
+				if( kbd.KeyIsPressed( VK_CONTROL ) ) scale /= scaleFactor;
+				if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x -= moveSpeed;
+				else artPos.y -= moveSpeed;
 				break;
 			}
-		}
+	}
+	if( kbd.KeyIsPressed( VK_CONTROL ) )
+	{
 		if( kbd.KeyIsPressed( VK_OEM_PLUS ) )
 		{
 			scale *= scaleFactor;
@@ -112,14 +117,10 @@ void ImageHandler::Update( Mouse& mouse,
 			scale /= scaleFactor;
 		}
 
-		if( kbd.KeyIsPressed( '0' ) )
-		{
-			CenterImage();
-		}
+		if( kbd.KeyIsPressed( '0' ) ) CenterImage();
 	}
 
 	// Click and drag or use arrow keys to move.
-	static constexpr float moveSpeed = 5.5f;
 	static constexpr float slowAmount = 0.2f;
 	float speed = 2.0f;
 	if( kbd.KeyIsPressed( VK_SHIFT ) ) speed *= moveSpeed;
