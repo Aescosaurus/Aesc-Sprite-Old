@@ -42,7 +42,7 @@ void ToolHandler::Update( const Mouse& mouse,
 
 void ToolHandler::Draw( Graphics& gfx ) const
 {
-	gfx.DrawSprite( 50,1,GetToolSurf( tool ),
+	gfx.DrawSprite( 55,1,GetToolSurf( tool ),
 		SpriteEffect::Chroma{ Colors::Magenta } );
 
 	brush.Draw( gfx );

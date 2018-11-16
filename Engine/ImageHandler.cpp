@@ -96,12 +96,12 @@ void ImageHandler::Update( Mouse& mouse,
 			{
 			case Mouse::Event::Type::WheelUp:
 				if( kbd.KeyIsPressed( VK_CONTROL ) ) scale *= scaleFactor;
-				if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x += moveSpeed;
+				else if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x += moveSpeed;
 				else artPos.y += moveSpeed;
 				break;
 			case Mouse::Event::Type::WheelDown:
 				if( kbd.KeyIsPressed( VK_CONTROL ) ) scale /= scaleFactor;
-				if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x -= moveSpeed;
+				else if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x -= moveSpeed;
 				else artPos.y -= moveSpeed;
 				break;
 			}
