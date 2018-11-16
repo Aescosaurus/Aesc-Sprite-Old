@@ -13,12 +13,16 @@ class ImageHandler
 public:
 	ImageHandler( const RectI& clipArea );
 
+	// TODO: Heckin make this whole method cleaner.
 	void Update( Mouse& mouse,
 		const Keyboard& kbd,ToolMode tool,
 		Color main,Color off );
 	void Draw( Graphics& gfx ) const;
 
 	void CenterImage();
+private:
+	// Recursive, call to fill until hitting "walls".
+	void TryFillPlusAt( const Vei2& pos,Color c,Color baseFill );
 private:
 	static constexpr Vei2 canvSize = { 8,8 };
 	Surface art;

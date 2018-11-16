@@ -10,25 +10,11 @@ ToolHandler::ToolHandler( ToolMode& tool )
 void ToolHandler::Update( const Mouse& mouse,
 	const Keyboard& kbd,Color& main,Color& off )
 {
-	if( kbd.KeyIsPressed( 'B' ) )
-	{
-		tool = ToolMode::Brush;
-	}
-
-	if( kbd.KeyIsPressed( 'E' ) )
-	{
-		tool = ToolMode::Eraser;
-	}
-
-	if( kbd.KeyIsPressed( 'H' ) )
-	{
-		tool = ToolMode::Hand;
-	}
-	
-	if( kbd.KeyIsPressed( 'Z' ) )
-	{
-		tool = ToolMode::Zoomer;
-	}
+	if( kbd.KeyIsPressed( 'B' ) ) tool = ToolMode::Brush;
+	if( kbd.KeyIsPressed( 'E' ) ) tool = ToolMode::Eraser;
+	if( kbd.KeyIsPressed( 'H' ) ) tool = ToolMode::Hand;
+	if( kbd.KeyIsPressed( 'Z' ) ) tool = ToolMode::Zoomer;
+	if( kbd.KeyIsPressed( 'G' ) ) tool = ToolMode::Bucket;
 
 	if( kbd.KeyIsPressed( 'X' ) )
 	{
@@ -51,6 +37,7 @@ void ToolHandler::Update( const Mouse& mouse,
 	if( eraser.Update( mouse ) ) tool = ToolMode::Eraser;
 	if( hand.Update( mouse ) ) tool = ToolMode::Hand;
 	if( zoomer.Update( mouse ) ) tool = ToolMode::Zoomer;
+	if( bucket.Update( mouse ) ) tool = ToolMode::Bucket;
 }
 
 void ToolHandler::Draw( Graphics& gfx ) const
@@ -62,6 +49,7 @@ void ToolHandler::Draw( Graphics& gfx ) const
 	eraser.Draw( gfx );
 	hand.Draw( gfx );
 	zoomer.Draw( gfx );
+	bucket.Draw( gfx );
 }
 
 const Surface& ToolHandler::GetToolSurf( ToolMode tool ) const
@@ -76,6 +64,8 @@ const Surface& ToolHandler::GetToolSurf( ToolMode tool ) const
 		return( handImg );
 	case ToolMode::Zoomer:
 		return( zoomerImg );
+	case ToolMode::Bucket:
+		return( bucketImg );
 	default:
 		assert( false );
 		return( brushImg );

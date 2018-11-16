@@ -44,7 +44,8 @@ void ImageHandler::Update( Mouse& mouse,
 	artProxy = art;
 	Vec2 mousePos = Vec2( mouse.GetPos() );
 
-	if( ( tool == ToolMode::Brush || tool == ToolMode::Eraser ) &&
+	if( ( tool == ToolMode::Brush || tool == ToolMode::Eraser ||
+		tool == ToolMode::Bucket ) &&
 		clipArea.ContainsPoint( Vei2( mousePos ) ) &&
 		art.GetExpandedBy( Vei2( scale ) ).GetRect()
 		.GetMovedBy( artPos ).ContainsPoint( Vei2( mousePos ) ) )
@@ -67,6 +68,12 @@ void ImageHandler::Update( Mouse& mouse,
 
 		if( drawColor != nullptr )
 		{
+			if( tool == ToolMode::Bucket )
+			{
+				TryFillPlusAt( Vei2( mousePos ),*drawColor,
+					art.GetPixel( int( mousePos.x ),int( mousePos.y ) ) );
+			}
+
 			art.PutPixel( int( mousePos.x ),
 				int( mousePos.y ),*drawColor );
 		}
@@ -131,10 +138,10 @@ void ImageHandler::Update( Mouse& mouse,
 			break;
 		case ToolMode::Zoomer:
 		{
-			static constexpr float scaleFactor = 1.05f;
+			static constexpr float scaleFactor = 1.025f;
 			const auto amount = ( mouse.GetPos().x - oldMousePos.x );
-			if( amount > 0 ) scale *= scaleFactor;
-			else if( amount < 0 ) scale /= scaleFactor;
+			if( amount > 1 ) scale *= scaleFactor;
+			else if( amount < -1 ) scale /= scaleFactor;
 		}
 		break;
 		}
@@ -171,4 +178,42 @@ void ImageHandler::CenterImage()
 	// const auto surfRect = surf.GetRect();
 	// artPos.x = clipArea.GetWidth() / 2 - surfRect.GetWidth() / 2;
 	// artPos.y = clipArea.GetHeight() / 2 - surfRect.GetHeight() / 2;
+}
+
+void ImageHandler::TryFillPlusAt( const Vei2& pos,Color c,Color baseFill )
+{
+	if( c == baseFill ) return;
+
+	art.PutPixel( pos.x,pos.y,c );
+
+	if( pos.y > 0 )
+	{
+		if( art.GetPixel( pos.x,pos.y - 1 ) == baseFill )
+		{
+			TryFillPlusAt( pos + Vei2::Up(),c,baseFill );
+		}
+	}
+	if( pos.y < art.GetHeight() - 1 )
+	{
+		if( art.GetPixel( pos.x,pos.y + 1 ) == baseFill )
+		{
+			TryFillPlusAt( pos + Vei2::Down(),c,baseFill );
+		}
+	}
+	if( pos.x > 0 )
+	{
+		if( art.GetPixel( pos.x - 1,pos.y ) == baseFill )
+		{
+			TryFillPlusAt( pos + Vei2::Left(),c,baseFill );
+		}
+	}
+	if( pos.x < art.GetWidth() - 1 )
+	{
+		if( art.GetPixel( pos.x + 1,pos.y ) == baseFill )
+		{
+			TryFillPlusAt( pos + Vei2::Right(),c,baseFill );
+		}
+	}
+
+	return;
 }
