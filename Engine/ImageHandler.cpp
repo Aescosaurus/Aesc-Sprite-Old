@@ -32,13 +32,13 @@ ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool )
 
 void ImageHandler::Update( Mouse& mouse,
 	const Keyboard& kbd,ToolMode tool,
-	Color main,Color off )
+	Color& main,Color& off )
 {
 	mousePos = mouse.GetPos();
 	Vec2 mouseTemp = Vec2( mouse.GetPos() );
 
 	if( ( tool == ToolMode::Brush || tool == ToolMode::Eraser ||
-		tool == ToolMode::Bucket ) &&
+		tool == ToolMode::Bucket || tool == ToolMode::Sampler ) &&
 		clipArea.ContainsPoint( Vei2( mouseTemp ) ) &&
 		art.GetExpandedBy( Vei2( scale ) ).GetRect()
 		.GetMovedBy( artPos ).ContainsPoint( Vei2( mouseTemp ) ) )
@@ -52,6 +52,10 @@ void ImageHandler::Update( Mouse& mouse,
 		if( mouse.LeftIsPressed() )
 		{
 			if( tool == ToolMode::Eraser ) drawColor = &chroma;
+			else if( tool == ToolMode::Sampler )
+			{
+				main = art.GetPixel( int( mouseTemp.x ),int( mouseTemp.y ) );
+			}
 			else drawColor = &main;
 		}
 		else if( mouse.RightIsPressed() )
@@ -263,6 +267,10 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 		break;
 	case ToolMode::Bucket:
 		gfx.DrawSprite( mousePos.x,mousePos.y,miniBucket,
+			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+		break;
+	case ToolMode::Sampler:
+		gfx.DrawSprite( mousePos.x,mousePos.y,miniSampler,
 			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
 		break;
 	}

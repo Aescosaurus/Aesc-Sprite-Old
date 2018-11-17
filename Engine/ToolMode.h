@@ -6,5 +6,6 @@ enum class ToolMode
 	Eraser,
 	Hand,
 	Zoomer,
-	Bucket
+	Bucket,
+	Sampler
 };

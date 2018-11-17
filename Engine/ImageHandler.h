@@ -16,7 +16,7 @@ public:
 	// TODO: Heckin make this whole method cleaner.
 	void Update( Mouse& mouse,
 		const Keyboard& kbd,ToolMode tool,
-		Color main,Color off );
+		Color& main,Color& off );
 	void Draw( Graphics& gfx ) const;
 
 	void CenterImage();
@@ -43,4 +43,5 @@ private:
 	const Surface miniHand = { Surface{ "Icons/MiniHand.bmp" },Vei2{ 3,3 } };
 	const Surface miniZoomer = { Surface{ "Icons/MiniZoomer.bmp" },Vei2{ 3,3 } };
 	const Surface miniBucket = { Surface{ "Icons/MiniBucket.bmp" },Vei2{ 3,3 } };
+	const Surface miniSampler = { Surface{ "Icons/MiniSampler.bmp" },Vei2{ 3,3 } };
 };
