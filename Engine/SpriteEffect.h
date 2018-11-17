@@ -124,4 +124,27 @@ namespace SpriteEffect
 		Color substitution;
 		float fadeAmount;
 	};
+	class BlackAndWhite
+	{
+	public:
+		BlackAndWhite( Color chroma )
+			:
+			chroma( chroma )
+		{}
+		void operator()( Color cSrc,int xDest,int yDest,Graphics& gfx ) const
+		{
+			if( cSrc != chroma )
+			{
+				const auto val = float( cSrc.GetR() ) * 0.3f +
+					float( cSrc.GetG() ) * 0.59f +
+					float( cSrc.GetB() ) * 0.11f;
+
+				const auto uval = unsigned char( val );
+				gfx.PutPixel( xDest,yDest,Colors
+					::MakeRGB( uval,uval,uval ) );
+			}
+		}
+	private:
+		Color chroma;
+	};
 }

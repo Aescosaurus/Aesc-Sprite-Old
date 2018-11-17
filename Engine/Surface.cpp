@@ -132,6 +132,20 @@ void Surface::DrawRect( int x,int y,int width,int height,Color c )
 	}
 }
 
+void Surface::CopyInto( const Surface& other )
+{
+	const int maxWidth = std::max( GetWidth(),other.GetWidth() );
+	const int maxHeight = std::max( GetHeight(),other.GetHeight() );
+
+	for( int y = 0; y < maxHeight; ++y )
+	{
+		for( int x = 0; x < maxWidth; ++x )
+		{
+			PutPixel( x,y,other.GetPixel( x,y ) );
+		}
+	}
+}
+
 Color Surface::GetPixel( int x,int y ) const
 {
 	assert( x >= 0 );

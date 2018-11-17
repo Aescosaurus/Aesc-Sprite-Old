@@ -1,23 +1,16 @@
 #include "ImageHandler.h"
 #include "SpriteEffect.h"
 
-ImageHandler::ImageHandler( const RectI& clipArea )
+ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool )
 	:
 	art( canvSize.x,canvSize.y ),
-	artProxy( canvSize.x,canvSize.y ),
 	clipArea( clipArea ),
 	artPos( { float( clipArea.left ),float( clipArea.top ) } ),
 	bgPattern( clipArea.GetWidth() / bgGrainAmount,
-		clipArea.GetHeight() / bgGrainAmount )
+		clipArea.GetHeight() / bgGrainAmount ),
+	curTool( curTool )
 {
-	for( int y = 0; y < art.GetHeight(); ++y )
-	{
-		for( int x = 0; x < art.GetWidth(); ++x )
-		{
-			art.PutPixel( x,y,chroma );
-		}
-	}
-	artProxy = art;
+	art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
 
 	static constexpr Color col1 = Colors::MakeRGB( 255,255,255 );
 	static constexpr Color col2 = Colors::MakeRGB( 204,204,204 );
@@ -41,18 +34,18 @@ void ImageHandler::Update( Mouse& mouse,
 	const Keyboard& kbd,ToolMode tool,
 	Color main,Color off )
 {
-	artProxy = art;
-	Vec2 mousePos = Vec2( mouse.GetPos() );
+	mousePos = mouse.GetPos();
+	Vec2 mouseTemp = Vec2( mouse.GetPos() );
 
 	if( ( tool == ToolMode::Brush || tool == ToolMode::Eraser ||
 		tool == ToolMode::Bucket ) &&
-		clipArea.ContainsPoint( Vei2( mousePos ) ) &&
+		clipArea.ContainsPoint( Vei2( mouseTemp ) ) &&
 		art.GetExpandedBy( Vei2( scale ) ).GetRect()
-		.GetMovedBy( artPos ).ContainsPoint( Vei2( mousePos ) ) )
+		.GetMovedBy( artPos ).ContainsPoint( Vei2( mouseTemp ) ) )
 	{
-		mousePos -= artPos;
-		mousePos.x /= scale.x;
-		mousePos.y /= scale.y;
+		mouseTemp -= artPos;
+		mouseTemp.x /= scale.x;
+		mouseTemp.y /= scale.y;
 
 		const Color* drawColor = nullptr;
 
@@ -70,19 +63,12 @@ void ImageHandler::Update( Mouse& mouse,
 		{
 			if( tool == ToolMode::Bucket )
 			{
-				TryFillPlusAt( Vei2( mousePos ),*drawColor,
-					art.GetPixel( int( mousePos.x ),int( mousePos.y ) ) );
+				TryFillPlusAt( Vei2( mouseTemp ),*drawColor,
+					art.GetPixel( int( mouseTemp.x ),int( mouseTemp.y ) ) );
 			}
 
-			art.PutPixel( int( mousePos.x ),
-				int( mousePos.y ),*drawColor );
-		}
-		else
-		{
-			Color preview = main;
-			if( tool == ToolMode::Eraser ) preview = chroma;
-			artProxy.PutPixel( int( mousePos.x ),
-				int( mousePos.y ),preview );
+			art.PutPixel( int( mouseTemp.x ),
+				int( mouseTemp.y ),*drawColor );
 		}
 	}
 	static constexpr float scaleFactor = 1.2f;
@@ -152,16 +138,10 @@ void ImageHandler::Update( Mouse& mouse,
 
 void ImageHandler::Draw( Graphics& gfx ) const
 {
-	const Surface drawSurf = artProxy.GetExpandedBy( Vei2( scale ) );
+	const Surface drawSurf = art.GetExpandedBy( Vei2( scale ) );
 	const auto drawPos = Vei2( artPos );
 	const auto drawRect = drawSurf.GetRect();
-	// gfx.DrawHitbox( drawRect.GetMovedBy( drawPos ),Colors::Cyan );
 
-	// gfx.DrawSprite( drawPos.x,drawPos.y,
-	// 	drawRect.GetMovedBy( drawPos ),
-	// 	drawRect.GetMovedBy( drawPos ).GetClipped( clipArea ),
-	// 	bgPattern.GetExpandedBy( Vei2{ bgGrainAmount,bgGrainAmount } ),
-	// 	SpriteEffect::Chroma{ Colors::Magenta } );
 	gfx.DrawSprite( drawPos.x,drawPos.y,
 		drawRect,clipArea,
 		bgPattern.GetExpandedBy( Vei2{ bgGrainAmount,bgGrainAmount } ),
@@ -170,15 +150,15 @@ void ImageHandler::Draw( Graphics& gfx ) const
 	gfx.DrawSprite( drawPos.x,drawPos.y,drawRect,
 		clipArea,drawSurf,
 		SpriteEffect::Chroma{ Colors::Magenta } );
+
+	DrawCursor( gfx );
 }
 
 void ImageHandler::CenterImage()
 {
 	// TODO: Fix this.
-	// const Surface surf = artProxy.GetExpandedBy( Vei2( scale ) );
-	// const auto surfRect = surf.GetRect();
-	// artPos.x = clipArea.GetWidth() / 2 - surfRect.GetWidth() / 2;
-	// artPos.y = clipArea.GetHeight() / 2 - surfRect.GetHeight() / 2;
+	artPos.x = float( clipArea.left );
+	artPos.y = float( clipArea.top );
 }
 
 void ImageHandler::TryFillPlusAt( const Vei2& pos,Color c,Color baseFill )
@@ -217,4 +197,73 @@ void ImageHandler::TryFillPlusAt( const Vei2& pos,Color c,Color baseFill )
 	}
 
 	return;
+}
+
+void ImageHandler::ResizeCanvas( const Vei2& newSize )
+{
+	canvSize = newSize;
+
+	Surface temp = art;
+	art = Surface{ canvSize.x,canvSize.y };
+	art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
+	art.CopyInto( temp );
+}
+
+void ImageHandler::DrawCursor( Graphics& gfx ) const
+{
+	const auto DrawSquare = [&]( Color lineColor,Graphics& gfx )
+	{
+		const Vei2 pixelSize = Vei2( Vec2{
+			( float( canvSize.x ) * scale.x ) / float( canvSize.x ),
+			( float( canvSize.y ) * scale.y ) / float( canvSize.y ) } );
+		RectI rect = { 0,pixelSize.x,0,pixelSize.y };
+		rect.MoveTo( mousePos - Vec2( rect.GetSize() ) / 2.0f );
+		if( rect.IsContainedBy( clipArea ) )
+		{
+			gfx.DrawHitbox( rect,lineColor );
+			return( rect );
+		}
+		return( RectI{ -9999,-9999,-9999,-9999 } );
+	};
+
+	const Color cursorCol = art.GetExpandedBy( scale )
+		.GetRect().GetMovedBy( artPos ).ContainsPoint( mousePos )
+		? Colors::DarkGray : Colors::LightGray;
+	switch( curTool )
+	{
+	case ToolMode::Brush:
+	{
+		const auto rect = DrawSquare( cursorCol,gfx );
+		if( rect.IsContainedBy( clipArea ) )
+		{
+			gfx.DrawLine( mousePos + Vei2::Left() * ( rect.GetWidth() / 4 ),
+				mousePos + Vei2::Right() * ( rect.GetWidth() / 4 ),cursorCol );
+			gfx.DrawLine( mousePos + Vei2::Up() * ( rect.GetHeight() / 4 ),
+				mousePos + Vei2::Down() * ( rect.GetHeight() / 4 ),cursorCol );
+		}
+	}
+	break;
+	case ToolMode::Eraser:
+	{
+		const auto rect = DrawSquare( cursorCol,gfx );
+		if( rect.IsContainedBy( clipArea ) )
+		{
+			gfx.DrawLine( mousePos + Vei2::Left() * ( rect.GetWidth() / 8 ),
+				mousePos + Vei2::Right() * ( rect.GetWidth() / 8 ),cursorCol );
+		}
+	}
+	break;
+	case ToolMode::Hand:
+		gfx.DrawSprite( mousePos.x,mousePos.y,miniHand,
+			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+		break;
+	case ToolMode::Zoomer:
+		gfx.DrawSprite( mousePos.x,mousePos.y,miniZoomer,
+			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+		break;
+	case ToolMode::Bucket:
+		gfx.DrawSprite( mousePos.x,mousePos.y,miniBucket,
+			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+		break;
+	}
 }

@@ -28,6 +28,8 @@ public:
 
 	void PutPixel( int x,int y,Color c );
 	void DrawRect( int x,int y,int width,int height,Color c );
+	// Copies other surf into this one, even if it's smaller.
+	void CopyInto( const Surface& other );
 
 	Color GetPixel( int x,int y ) const;
 	int GetWidth() const;

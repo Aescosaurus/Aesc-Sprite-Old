@@ -11,7 +11,7 @@
 class ImageHandler
 {
 public:
-	ImageHandler( const RectI& clipArea );
+	ImageHandler( const RectI& clipArea,ToolMode& curTool );
 
 	// TODO: Heckin make this whole method cleaner.
 	void Update( Mouse& mouse,
@@ -23,16 +23,24 @@ public:
 private:
 	// Recursive, call to fill until hitting "walls".
 	void TryFillPlusAt( const Vei2& pos,Color c,Color baseFill );
+	void ResizeCanvas( const Vei2& newSize );
+
+	void DrawCursor( Graphics& gfx ) const;
 private:
-	static constexpr Vei2 canvSize = { 8,8 };
+	Vei2 canvSize = { 8,8 };
 	Surface art;
-	Surface artProxy;
 	const RectI& clipArea;
 	Vec2 artPos;
 	Vec2 scale = { 10.0f,10.0f };
 	static constexpr Color chroma = Colors::Magenta;
 
+	Vei2 mousePos = { 0,0 };
 	Vei2 oldMousePos = { 0,0 };
+	ToolMode& curTool;
 	static constexpr int bgGrainAmount = 10;
 	Surface bgPattern;
+
+	const Surface miniHand = { Surface{ "Icons/MiniHand.bmp" },Vei2{ 3,3 } };
+	const Surface miniZoomer = { Surface{ "Icons/MiniZoomer.bmp" },Vei2{ 3,3 } };
+	const Surface miniBucket = { Surface{ "Icons/MiniBucket.bmp" },Vei2{ 3,3 } };
 };
