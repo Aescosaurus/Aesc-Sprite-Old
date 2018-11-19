@@ -1,5 +1,6 @@
 #include "ImageHandler.h"
 #include "SpriteEffect.h"
+#include "WriteToBitmap.h"
 
 ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool )
 	:
@@ -34,6 +35,12 @@ void ImageHandler::Update( Mouse& mouse,
 	const Keyboard& kbd,ToolMode tool,
 	Color& main,Color& off )
 {
+	if( kbd.KeyIsPressed( VK_CONTROL ) &&
+		kbd.KeyIsPressed( 'S' ) )
+	{
+		WriteToBitmap::Write( art,"Output/Test.bmp" );
+	}
+
 	mousePos = mouse.GetPos();
 	Vec2 mouseTemp = Vec2( mouse.GetPos() );
 

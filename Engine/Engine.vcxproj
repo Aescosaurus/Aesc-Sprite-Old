@@ -162,6 +162,7 @@
     <ClInclude Include="ToolHandler.h" />
     <ClInclude Include="ToolMode.h" />
     <ClInclude Include="Vec2.h" />
+    <ClInclude Include="WriteToBitmap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Anim.cpp" />
@@ -190,6 +191,7 @@
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</BasicRuntimeChecks>
     </ClCompile>
     <ClCompile Include="ToolHandler.cpp" />
+    <ClCompile Include="WriteToBitmap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">
