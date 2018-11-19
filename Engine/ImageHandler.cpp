@@ -167,9 +167,11 @@ void ImageHandler::Draw( Graphics& gfx ) const
 
 void ImageHandler::CenterImage()
 {
-	// TODO: Fix this.
-	artPos.x = float( clipArea.left );
-	artPos.y = float( clipArea.top );
+	const auto artRect = art.GetExpandedBy( scale ).GetRect();
+
+	artPos = Vec2( clipArea.GetSize() ) / 2.0f -
+		Vec2( artRect.GetSize() ) / 2.0f +
+		Vec2{ float( clipArea.left ),float( clipArea.top ) };
 }
 
 void ImageHandler::TryFillPlusAt( const Vei2& pos,Color c,Color baseFill )
