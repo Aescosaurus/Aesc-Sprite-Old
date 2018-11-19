@@ -42,7 +42,7 @@ void ImageHandler::Update( Mouse& mouse,
 	}
 
 	mousePos = mouse.GetPos();
-	Vec2 mouseTemp = Vec2( mouse.GetPos() );
+	Vei2 mouseTemp = mouse.GetPos();
 
 	if( ( tool == ToolMode::Brush || tool == ToolMode::Eraser ||
 		tool == ToolMode::Bucket || tool == ToolMode::Sampler ) &&
@@ -50,9 +50,9 @@ void ImageHandler::Update( Mouse& mouse,
 		art.GetExpandedBy( Vei2( scale ) ).GetRect()
 		.GetMovedBy( artPos ).ContainsPoint( Vei2( mouseTemp ) ) )
 	{
-		mouseTemp -= artPos;
-		mouseTemp.x /= scale.x;
-		mouseTemp.y /= scale.y;
+		mouseTemp -= Vei2( artPos );
+		mouseTemp.x /= int( scale.x );
+		mouseTemp.y /= int( scale.y );
 
 		const Color* drawColor = nullptr;
 
@@ -61,7 +61,7 @@ void ImageHandler::Update( Mouse& mouse,
 			if( tool == ToolMode::Eraser ) drawColor = &chroma;
 			else if( tool == ToolMode::Sampler )
 			{
-				main = art.GetPixel( int( mouseTemp.x ),int( mouseTemp.y ) );
+				main = art.GetPixel( mouseTemp.x,mouseTemp.y );
 			}
 			else drawColor = &main;
 		}
@@ -74,12 +74,12 @@ void ImageHandler::Update( Mouse& mouse,
 		{
 			if( tool == ToolMode::Bucket )
 			{
-				TryFillPlusAt( Vei2( mouseTemp ),*drawColor,
-					art.GetPixel( int( mouseTemp.x ),int( mouseTemp.y ) ) );
+				TryFillPlusAt( mouseTemp,*drawColor,
+					art.GetPixel( mouseTemp.x,mouseTemp.y ) );
 			}
 
-			art.PutPixel( int( mouseTemp.x ),
-				int( mouseTemp.y ),*drawColor );
+			art.PutPixel( mouseTemp.x,mouseTemp.y,
+				*drawColor );
 		}
 	}
 	static constexpr float scaleFactor = 1.2f;
