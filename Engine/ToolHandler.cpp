@@ -16,6 +16,7 @@ void ToolHandler::Update( const Mouse& mouse,
 	if( kbd.KeyIsPressed( 'Z' ) ) tool = ToolMode::Zoomer;
 	if( kbd.KeyIsPressed( 'G' ) ) tool = ToolMode::Bucket;
 	if( kbd.KeyIsPressed( 'I' ) ) tool = ToolMode::Sampler;
+	if( kbd.KeyIsPressed( 'C' ) ) tool = ToolMode::Resizer;
 
 	if( kbd.KeyIsPressed( 'X' ) )
 	{
@@ -40,6 +41,7 @@ void ToolHandler::Update( const Mouse& mouse,
 	if( zoomer.Update( mouse ) ) tool = ToolMode::Zoomer;
 	if( bucket.Update( mouse ) ) tool = ToolMode::Bucket;
 	if( sampler.Update( mouse ) ) tool = ToolMode::Sampler;
+	if( resizer.Update( mouse ) ) tool = ToolMode::Resizer;
 }
 
 void ToolHandler::Draw( Graphics& gfx ) const
@@ -53,6 +55,7 @@ void ToolHandler::Draw( Graphics& gfx ) const
 	zoomer.Draw( gfx );
 	bucket.Draw( gfx );
 	sampler.Draw( gfx );
+	resizer.Draw( gfx );
 }
 
 const Surface& ToolHandler::GetToolSurf( ToolMode tool ) const
@@ -71,6 +74,8 @@ const Surface& ToolHandler::GetToolSurf( ToolMode tool ) const
 		return( bucketImg );
 	case ToolMode::Sampler:
 		return( samplerImg );
+	case ToolMode::Resizer:
+		return( resizerImg );
 	default:
 		assert( false );
 		return( brushImg );

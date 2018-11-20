@@ -7,5 +7,6 @@ enum class ToolMode
 	Hand,
 	Zoomer,
 	Bucket,
-	Sampler
+	Sampler,
+	Resizer
 };

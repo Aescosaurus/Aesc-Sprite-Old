@@ -147,4 +147,28 @@ namespace SpriteEffect
 	private:
 		Color chroma;
 	};
+	class Inverse
+	{
+	public:
+		Inverse( Color chroma )
+			:
+			chroma( chroma )
+		{}
+		void operator()( Color cSrc,int xDest,int yDest,Graphics& gfx ) const
+		{
+			if( cSrc != chroma )
+			{
+				const auto white = Colors::White;
+				auto pix = gfx.GetPixel( xDest,yDest );
+
+				pix.SetR( white.GetR() - pix.GetR() );
+				pix.SetG( white.GetG() - pix.GetG() );
+				pix.SetB( white.GetB() - pix.GetB() );
+
+				gfx.PutPixel( xDest,yDest,pix );
+			}
+		}
+	private:
+		Color chroma;
+	};
 }

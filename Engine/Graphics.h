@@ -55,6 +55,7 @@ public:
 	Graphics& operator=( const Graphics& ) = delete;
 	void EndFrame();
 	void BeginFrame();
+	void InvertPixelAt( int x,int y );
 	void PutPixel( int x,int y,int r,int g,int b )
 	{
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
@@ -69,6 +70,8 @@ public:
 	void DrawCircle( int x,int y,int radius,Color c );
 	void DrawLineOld( int x0,int y0,int x1,int y1,Color c );
 	void DrawLine( Vec2 p0,Vec2 p1,Color c );
+	// Draw a line with inverted colors.
+	void DrawLineInverse( Vec2 p0,Vec2 p1 );
 	template<typename R>
 	void DrawHitbox( const Rect_<R>& hitbox,Color c = { 255,160,0 } )
 	{
@@ -80,6 +83,17 @@ public:
 			{ float( hitbox.left ),float( hitbox.bottom ) },c );
 		DrawLine( { float( hitbox.left ),float( hitbox.bottom ) },
 			{ float( hitbox.left ),float( hitbox.top ) },c );
+	}
+	void DrawHitboxInverse( const RectI& hitbox )
+	{
+		DrawLineInverse( { float( hitbox.left ),float( hitbox.top ) },
+			{ float( hitbox.right ),float( hitbox.top ) } );
+		DrawLineInverse( { float( hitbox.right ),float( hitbox.top ) },
+			{ float( hitbox.right ),float( hitbox.bottom ) } );
+		DrawLineInverse( { float( hitbox.right ),float( hitbox.bottom ) },
+			{ float( hitbox.left ),float( hitbox.bottom ) } );
+		DrawLineInverse( { float( hitbox.left ),float( hitbox.bottom ) },
+			{ float( hitbox.left ),float( hitbox.top ) } );
 	}
 	template<typename E>
 	void DrawSprite( int x,int y,const Surface& s,E effect,bool reversed = false )

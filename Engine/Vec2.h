@@ -74,6 +74,11 @@ public:
 		return( *this );
 	}
 
+	constexpr Vec2_ operator-() const
+	{
+		return( Vec2_{ -x,-y } );
+	}
+
 	constexpr T GetLength() const
 	{
 		return T( std::sqrt( GetLengthSq() ) );

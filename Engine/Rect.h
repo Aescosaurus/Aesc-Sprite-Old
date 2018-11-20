@@ -66,6 +66,36 @@ public:
 		return( temp );
 	}
 
+	constexpr void Squareize()
+	{
+		if( GetWidth() > GetHeight() )
+		{
+			SetWidth( GetHeight() );
+		}
+		else
+		{
+			SetHeight( GetWidth() );
+		}
+	}
+	constexpr void FloatDivide( const Vec2& amount )
+	{
+		auto temp = float( left );
+		temp /= amount.x;
+		left = int( std::round( temp ) );
+
+		temp = float( right );
+		temp /= amount.x;
+		right = int( std::round( temp ) );
+
+		temp = float( top );
+		temp /= amount.y;
+		top = int( std::round( temp ) );
+
+		temp = float( bottom );
+		temp /= amount.y;
+		bottom = int( std::round( temp ) );
+	}
+
 	static constexpr Rect_ FromCenter( const Vec2_<T>& center,
 		T halfWidth,T halfHeight )
 	{
@@ -97,6 +127,14 @@ public:
 	constexpr T GetHeight() const
 	{
 		return bottom - top;
+	}
+	constexpr void SetWidth( int newWidth )
+	{
+		right = left + newWidth;
+	}
+	constexpr void SetHeight( int newHeight )
+	{
+		bottom = top + newHeight;
 	}
 	constexpr Vec2_<T> GetSize() const
 	{

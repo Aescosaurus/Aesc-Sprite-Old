@@ -1,6 +1,7 @@
 #include "ImageHandler.h"
 #include "SpriteEffect.h"
 #include "WriteToBitmap.h"
+#include <string>
 
 ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool )
 	:
@@ -89,19 +90,19 @@ void ImageHandler::Update( Mouse& mouse,
 	while( !mouse.IsEmpty() )
 	{
 		const auto e = mouse.Read();
-			switch( e.GetType() )
-			{
-			case Mouse::Event::Type::WheelUp:
-				if( kbd.KeyIsPressed( VK_CONTROL ) ) scale *= scaleFactor;
-				else if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x += moveSpeed;
-				else artPos.y += moveSpeed;
-				break;
-			case Mouse::Event::Type::WheelDown:
-				if( kbd.KeyIsPressed( VK_CONTROL ) ) scale /= scaleFactor;
-				else if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x -= moveSpeed;
-				else artPos.y -= moveSpeed;
-				break;
-			}
+		switch( e.GetType() )
+		{
+		case Mouse::Event::Type::WheelUp:
+			if( kbd.KeyIsPressed( VK_CONTROL ) ) scale *= scaleFactor;
+			else if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x += moveSpeed;
+			else artPos.y += moveSpeed;
+			break;
+		case Mouse::Event::Type::WheelDown:
+			if( kbd.KeyIsPressed( VK_CONTROL ) ) scale /= scaleFactor;
+			else if( kbd.KeyIsPressed( VK_SHIFT ) ) artPos.x -= moveSpeed;
+			else artPos.y -= moveSpeed;
+			break;
+		}
 	}
 	if( kbd.KeyIsPressed( VK_CONTROL ) )
 	{
@@ -144,6 +145,57 @@ void ImageHandler::Update( Mouse& mouse,
 		break;
 		}
 	}
+
+	if( curTool == ToolMode::Resizer )
+	{
+		if( mouse.LeftIsPressed() )
+		{
+			if( canCrop )
+			{
+				cropStart = mouse.GetPos();
+				canCrop = false;
+			}
+
+			cropEnd = mouse.GetPos();
+
+			if( kbd.KeyIsPressed( VK_SHIFT ) )
+			{
+				RectI resizeArea = { cropStart.x,cropEnd.x,
+					cropStart.y,cropEnd.y };
+				if( resizeArea.GetWidth() != resizeArea.GetHeight() )
+				{
+					resizeArea.Squareize();
+					cropEnd.x = resizeArea.right;
+					cropEnd.y = resizeArea.bottom;
+				}
+			}
+		}
+		else
+		{
+			canCrop = true;
+			// cropEnd = mouse.GetPos();
+		}
+
+		if( kbd.KeyIsPressed( VK_RETURN ) )
+		{
+			RectI resizeArea = { cropStart.x,cropEnd.x,
+				cropStart.y,cropEnd.y };
+			resizeArea.MoveBy( -artPos );
+
+			resizeArea.FloatDivide( scale );
+
+			Surface temp{ abs( resizeArea.GetWidth() ),
+				abs( resizeArea.GetHeight() ) };
+			temp.DrawRect( 0,0,temp.GetWidth(),temp.GetHeight(),chroma );
+			temp.CopyInto( art );
+
+			art = temp;
+
+			artPos.x = float( cropStart.x );
+			artPos.y = float( cropStart.y );
+		}
+	}
+
 	oldMousePos = mouse.GetPos();
 }
 
@@ -280,6 +332,26 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 		break;
 	case ToolMode::Sampler:
 		gfx.DrawSprite( mousePos.x,mousePos.y,miniSampler,
+			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+		break;
+	case ToolMode::Resizer:
+		RectI resizeArea = { cropStart.x,cropEnd.x,
+			cropStart.y,cropEnd.y };
+		if( resizeArea.IsContainedBy( clipArea ) )
+		{
+			gfx.DrawHitboxInverse( resizeArea );
+		}
+
+		if( !canCrop )
+		{
+			resizeArea.FloatDivide( scale );
+
+			const auto text = std::to_string( resizeArea.GetWidth() ) +
+				"x" + std::to_string( resizeArea.GetHeight() );
+			luckyPixel.DrawText( text,mousePos,Colors::Black,
+				SpriteEffect::Inverse{ Colors::White },gfx );
+		}
+		gfx.DrawSprite( mousePos.x,mousePos.y,miniResizer,
 			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
 		break;
 	}

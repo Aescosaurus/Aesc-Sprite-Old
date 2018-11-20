@@ -7,6 +7,7 @@
 #include "Mouse.h"
 #include "Keyboard.h"
 #include "ToolMode.h"
+#include "Font.h"
 
 class ImageHandler
 {
@@ -40,8 +41,15 @@ private:
 	static constexpr int bgGrainAmount = 10;
 	Surface bgPattern;
 
+	Vei2 cropStart = { 0,0 };
+	bool canCrop = false;
+	Vei2 cropEnd = { 0,0 };
+
 	const Surface miniHand = { Surface{ "Icons/MiniHand.bmp" },Vei2{ 3,3 } };
 	const Surface miniZoomer = { Surface{ "Icons/MiniZoomer.bmp" },Vei2{ 3,3 } };
 	const Surface miniBucket = { Surface{ "Icons/MiniBucket.bmp" },Vei2{ 3,3 } };
 	const Surface miniSampler = { Surface{ "Icons/MiniSampler.bmp" },Vei2{ 3,3 } };
+	const Surface miniResizer = { Surface{ "Icons/MiniResizer.bmp" },Vei2{ 3,3 } };
+
+	const Font luckyPixel = "Fonts/LuckyPixel24x36.bmp";
 };

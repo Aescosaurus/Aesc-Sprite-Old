@@ -134,12 +134,14 @@ void Surface::DrawRect( int x,int y,int width,int height,Color c )
 
 void Surface::CopyInto( const Surface& other )
 {
-	const int maxWidth = std::max( GetWidth(),other.GetWidth() );
-	const int maxHeight = std::max( GetHeight(),other.GetHeight() );
+	// Don't copy over pixels we don't have or
+	//  into pixels that don't exist.
+	const int minWidth = std::min( GetWidth(),other.GetWidth() );
+	const int minHeight = std::min( GetHeight(),other.GetHeight() );
 
-	for( int y = 0; y < maxHeight; ++y )
+	for( int y = 0; y < minHeight; ++y )
 	{
-		for( int x = 0; x < maxWidth; ++x )
+		for( int x = 0; x < minWidth; ++x )
 		{
 			PutPixel( x,y,other.GetPixel( x,y ) );
 		}

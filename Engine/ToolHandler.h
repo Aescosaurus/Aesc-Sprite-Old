@@ -27,6 +27,7 @@ private:
 	const Surface zoomerImg = { { "Icons/Zoomer.bmp" },Vei2{ 3,3 } };
 	const Surface bucketImg = { { "Icons/Bucket.bmp" },Vei2{ 3,3 } };
 	const Surface samplerImg = { { "Icons/Sampler.bmp" },Vei2{ 3,3 } };
+	const Surface resizerImg = { { "Icons/Resizer.bmp" },Vei2{ 3,3 } };
 	// Buttons and stuff can go here I guess.
 	Button brush = { brushImg,Vei2{ 55 + 50 * 1,1 } };
 	Button eraser = { eraserImg,Vei2{ 55 + 50 * 2,1 } };
@@ -34,4 +35,5 @@ private:
 	Button zoomer = { zoomerImg,Vei2{ 55 + 50 * 4,1 } };
 	Button bucket = { bucketImg,Vei2{ 55 + 50 * 5,1 } };
 	Button sampler = { samplerImg,Vei2{ 55 + 50 * 6,1 } };
+	Button resizer = { resizerImg,Vei2{ 55 + 50 * 7,1 } };
 };
