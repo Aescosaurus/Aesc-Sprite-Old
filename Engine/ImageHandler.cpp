@@ -8,28 +8,12 @@ ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool )
 	art( canvSize.x,canvSize.y ),
 	clipArea( clipArea ),
 	artPos( { float( clipArea.left ),float( clipArea.top ) } ),
-	bgPattern( clipArea.GetWidth() / bgGrainAmount,
-		clipArea.GetHeight() / bgGrainAmount ),
+	bgPattern( canvSize.x,canvSize.y ),
 	curTool( curTool )
 {
 	art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
 
-	static constexpr Color col1 = Colors::MakeRGB( 255,255,255 );
-	static constexpr Color col2 = Colors::MakeRGB( 204,204,204 );
-	for( int y = 0; y < bgPattern.GetHeight(); ++y )
-	{
-		for( int x = 0; x < bgPattern.GetWidth(); ++x )
-		{
-			if( y % 2 == 0 )
-			{
-				bgPattern.PutPixel( x,y,x % 2 == 0 ? col1 : col2 );
-			}
-			else
-			{
-				bgPattern.PutPixel( x,y,x % 2 == 0 ? col2 : col1 );
-			}
-		}
-	}
+	ResizeCanvas( canvSize );
 }
 
 void ImageHandler::Update( Mouse& mouse,
@@ -71,7 +55,8 @@ void ImageHandler::Update( Mouse& mouse,
 			if( tool != ToolMode::Eraser ) drawColor = &off;
 		}
 
-		if( drawColor != nullptr )
+		if( drawColor != nullptr &&
+			!kbd.KeyIsPressed( VK_SPACE ) )
 		{
 			if( tool == ToolMode::Bucket )
 			{
@@ -130,19 +115,17 @@ void ImageHandler::Update( Mouse& mouse,
 	if( clipArea.ContainsPoint( mouse.GetPos() ) &&
 		mouse.LeftIsPressed() )
 	{
-		switch( tool )
+		if( kbd.KeyIsPressed( VK_SPACE ) ||
+			tool == ToolMode::Hand )
 		{
-		case ToolMode::Hand:
 			artPos += ( mouse.GetPos() - oldMousePos );
-			break;
-		case ToolMode::Zoomer:
+		}
+		if( tool == ToolMode::Zoomer )
 		{
 			static constexpr float scaleFactor = 1.025f;
 			const auto amount = ( mouse.GetPos().x - oldMousePos.x );
 			if( amount > 1 ) scale *= scaleFactor;
 			else if( amount < -1 ) scale /= scaleFactor;
-		}
-		break;
 		}
 	}
 
@@ -200,12 +183,14 @@ void ImageHandler::Update( Mouse& mouse,
 
 			resizeArea.FloatDivide( scale );
 
-			Surface temp{ abs( resizeArea.GetWidth() ),
-				abs( resizeArea.GetHeight() ) };
-			temp.DrawRect( 0,0,temp.GetWidth(),temp.GetHeight(),chroma );
-			temp.CopyInto( art );
-
-			art = temp;
+			// Surface temp{ abs( resizeArea.GetWidth() ),
+			// 	abs( resizeArea.GetHeight() ) };
+			// temp.DrawRect( 0,0,temp.GetWidth(),temp.GetHeight(),chroma );
+			// temp.CopyInto( art );
+			// 
+			// art = temp;
+			ResizeCanvas( { abs( resizeArea.GetWidth() ),
+				abs( resizeArea.GetHeight() ) } );
 
 			artPos.x = float( cropStart.x );
 			artPos.y = float( cropStart.y );
@@ -221,9 +206,13 @@ void ImageHandler::Draw( Graphics& gfx ) const
 	const auto drawPos = Vei2( artPos );
 	const auto drawRect = drawSurf.GetRect();
 
+	// gfx.DrawSprite( drawPos.x,drawPos.y,
+	// 	drawRect,clipArea,
+	// 	bgPattern.GetExpandedBy( Vei2{ bgGrainAmount,bgGrainAmount } ),
+	// 	SpriteEffect::Chroma{ Colors::Magenta } );
+	const auto bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
 	gfx.DrawSprite( drawPos.x,drawPos.y,
-		drawRect,clipArea,
-		bgPattern.GetExpandedBy( Vei2{ bgGrainAmount,bgGrainAmount } ),
+		bigPattern.GetRect(),clipArea,bigPattern,
 		SpriteEffect::Chroma{ Colors::Magenta } );
 
 	gfx.DrawSprite( drawPos.x,drawPos.y,drawRect,
@@ -288,6 +277,25 @@ void ImageHandler::ResizeCanvas( const Vei2& newSize )
 	art = Surface{ canvSize.x,canvSize.y };
 	art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
 	art.CopyInto( temp );
+
+	bgPattern = { canvSize.x,canvSize.y };
+
+	static constexpr Color c1 = Colors::MakeRGB( 255,255,255 );
+	static constexpr Color c2 = Colors::MakeRGB( 204,204,204 );
+	for( int y = 0; y < bgPattern.GetHeight(); ++y )
+	{
+		for( int x = 0; x < bgPattern.GetWidth(); ++x )
+		{
+			if( y % 2 == 0 )
+			{
+				bgPattern.PutPixel( x,y,x % 2 == 0 ? c1 : c2 );
+			}
+			else
+			{
+				bgPattern.PutPixel( x,y,x % 2 == 0 ? c2 : c1 );
+			}
+		}
+	}
 }
 
 void ImageHandler::DrawCursor( Graphics& gfx ) const
@@ -353,7 +361,7 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 	case ToolMode::Resizer:
 		RectI resizeArea = { cropStart.x,cropEnd.x,
 			cropStart.y,cropEnd.y };
-		if( resizeArea.IsContainedBy( clipArea ) )
+		if( resizeArea.IsContainedBy( clipArea ) && !canCrop )
 		{
 			gfx.DrawHitboxInverse( resizeArea );
 		}

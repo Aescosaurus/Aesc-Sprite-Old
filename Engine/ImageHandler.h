@@ -38,7 +38,7 @@ private:
 	Vei2 mousePos = { 0,0 };
 	Vei2 oldMousePos = { 0,0 };
 	ToolMode& curTool;
-	static constexpr int bgGrainAmount = 10;
+	// static constexpr int bgGrainAmount = 10;
 	Surface bgPattern;
 
 	Vei2 cropStart = { 0,0 };
