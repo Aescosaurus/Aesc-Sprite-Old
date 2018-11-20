@@ -81,19 +81,19 @@ public:
 	{
 		auto temp = float( left );
 		temp /= amount.x;
-		left = int( std::round( temp ) );
+		left = int( temp );
 
 		temp = float( right );
 		temp /= amount.x;
-		right = int( std::round( temp ) );
+		right = int( temp );
 
 		temp = float( top );
 		temp /= amount.y;
-		top = int( std::round( temp ) );
+		top = int( temp );
 
 		temp = float( bottom );
 		temp /= amount.y;
-		bottom = int( std::round( temp ) );
+		bottom = int( temp );
 	}
 
 	static constexpr Rect_ FromCenter( const Vec2_<T>& center,

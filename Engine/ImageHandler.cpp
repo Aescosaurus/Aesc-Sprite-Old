@@ -20,6 +20,14 @@ void ImageHandler::Update( Mouse& mouse,
 	const Keyboard& kbd,ToolMode tool,
 	Color& main,Color& off )
 {
+	if( ( kbd.KeyIsPressed( VK_SPACE ) || tool == ToolMode::Hand ) &&
+		mouse.LeftIsPressed() )
+	{
+		artPos += ( mouse.GetPos() - oldMousePos );
+		oldMousePos = mouse.GetPos();
+		return;
+	}
+
 	if( kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'S' ) )
 	{
@@ -183,12 +191,6 @@ void ImageHandler::Update( Mouse& mouse,
 
 			resizeArea.FloatDivide( scale );
 
-			// Surface temp{ abs( resizeArea.GetWidth() ),
-			// 	abs( resizeArea.GetHeight() ) };
-			// temp.DrawRect( 0,0,temp.GetWidth(),temp.GetHeight(),chroma );
-			// temp.CopyInto( art );
-			// 
-			// art = temp;
 			ResizeCanvas( { abs( resizeArea.GetWidth() ),
 				abs( resizeArea.GetHeight() ) } );
 
@@ -361,6 +363,7 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 	case ToolMode::Resizer:
 		RectI resizeArea = { cropStart.x,cropEnd.x,
 			cropStart.y,cropEnd.y };
+
 		if( resizeArea.IsContainedBy( clipArea ) && !canCrop )
 		{
 			gfx.DrawHitboxInverse( resizeArea );
@@ -368,7 +371,7 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 
 		if( !canCrop )
 		{
-			resizeArea.FloatDivide( scale );
+			resizeArea.FloatDivide( Vec2( Vei2( scale ) ) );
 
 			const auto text = std::to_string( resizeArea.GetWidth() ) +
 				"x" + std::to_string( resizeArea.GetHeight() );
