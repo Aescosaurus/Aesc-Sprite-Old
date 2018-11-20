@@ -151,14 +151,23 @@ void ImageHandler::Update( Mouse& mouse,
 	{
 		if( mouse.LeftIsPressed() )
 		{
+			const Vei2 pixelSize = Vei2( Vec2{
+				( float( canvSize.x ) * scale.x ) / float( canvSize.x ),
+				( float( canvSize.y ) * scale.y ) / float( canvSize.y ) } );
+
 			appliedCrop = false;
 			if( canCrop )
 			{
 				cropStart = mouse.GetPos();
+				while( cropStart.x % pixelSize.x != 0 ) --cropStart.x;
+				while( cropStart.y % pixelSize.y != 0 ) --cropStart.y;
+
 				canCrop = false;
 			}
 
 			cropEnd = mouse.GetPos();
+			while( cropEnd.x % pixelSize.x != 0 ) --cropEnd.x;
+			while( cropEnd.y % pixelSize.y != 0 ) --cropEnd.y;
 
 			if( kbd.KeyIsPressed( VK_SHIFT ) )
 			{
@@ -169,6 +178,8 @@ void ImageHandler::Update( Mouse& mouse,
 					resizeArea.Squareize();
 					cropEnd.x = resizeArea.right;
 					cropEnd.y = resizeArea.bottom;
+					while( cropEnd.x % pixelSize.x != 0 ) --cropEnd.x;
+					while( cropEnd.y % pixelSize.y != 0 ) --cropEnd.y;
 				}
 			}
 		}
@@ -185,7 +196,7 @@ void ImageHandler::Update( Mouse& mouse,
 
 			RectI resizeArea = { cropStart.x,cropEnd.x,
 				cropStart.y,cropEnd.y };
-			resizeArea.MoveBy( -artPos );
+			// resizeArea.MoveBy( -artPos );
 
 			resizeArea.FloatDivide( scale );
 
