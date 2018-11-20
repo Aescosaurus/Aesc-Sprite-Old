@@ -146,10 +146,12 @@ void ImageHandler::Update( Mouse& mouse,
 		}
 	}
 
-	if( curTool == ToolMode::Resizer )
+	if( curTool == ToolMode::Resizer &&
+		clipArea.ContainsPoint( mousePos ) )
 	{
 		if( mouse.LeftIsPressed() )
 		{
+			appliedCrop = false;
 			if( canCrop )
 			{
 				cropStart = mouse.GetPos();
@@ -176,8 +178,11 @@ void ImageHandler::Update( Mouse& mouse,
 			// cropEnd = mouse.GetPos();
 		}
 
-		if( kbd.KeyIsPressed( VK_RETURN ) )
+		// if( kbd.KeyIsPressed( VK_RETURN ) )
+		if( !mouse.LeftIsPressed() && !appliedCrop )
 		{
+			appliedCrop = true;
+
 			RectI resizeArea = { cropStart.x,cropEnd.x,
 				cropStart.y,cropEnd.y };
 			resizeArea.MoveBy( -artPos );
@@ -351,8 +356,11 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 			luckyPixel.DrawText( text,mousePos,Colors::Black,
 				SpriteEffect::Inverse{ Colors::White },gfx );
 		}
-		gfx.DrawSprite( mousePos.x,mousePos.y,miniResizer,
-			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+		else
+		{
+			gfx.DrawSprite( mousePos.x,mousePos.y,miniResizer,
+				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+		}
 		break;
 	}
 }
