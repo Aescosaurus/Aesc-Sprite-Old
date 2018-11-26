@@ -5,7 +5,7 @@
 void WriteToBitmap::Write( const Surface& data,
 	const std::string& name )
 {
-	std::ofstream out{ name };
+	std::ofstream out{ name,std::ios::out | std::ios::binary };
 	assert( out.good() );
 
 	const int mcuWidth = ( data.GetWidth() + 7 ) / 8;
@@ -47,13 +47,13 @@ void WriteToBitmap::Write( const Surface& data,
 	}
 }
 
-void WriteToBitmap::PutShort( std::ofstream& out,int v )
+void WriteToBitmap::PutShort( std::ofstream& out,uint v )
 {
 	out.put( ( v >> 0 ) & 0xFF );
 	out.put( ( v >> 8 ) & 0xFF );
 }
 
-void WriteToBitmap::PutInt( std::ofstream& out,int v )
+void WriteToBitmap::PutInt( std::ofstream& out,uint v )
 {
 	out.put( ( v >> 0 ) & 0xFF );
 	out.put( ( v >> 8 ) & 0xFF );

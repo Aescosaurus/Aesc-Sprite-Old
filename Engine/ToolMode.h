@@ -8,5 +8,6 @@ enum class ToolMode
 	Zoomer,
 	Bucket,
 	Sampler,
-	Resizer
+	Resizer,
+	Ruler
 };
