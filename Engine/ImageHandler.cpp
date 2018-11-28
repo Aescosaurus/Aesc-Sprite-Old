@@ -31,7 +31,7 @@ void ImageHandler::Update( Mouse& mouse,
 	if( kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'S' ) )
 	{
-		WriteToBitmap::Write( art,"Output/Test.bmp" );
+		WriteToBitmap::Write( art,"Icons/Ruler.bmp" ); // From Output/Test.bmp.
 	}
 
 	mousePos = mouse.GetPos();

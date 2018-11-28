@@ -45,6 +45,52 @@ void WriteToBitmap::Write( const Surface& data,
 			out.put( 0 );
 		}
 	}
+	/*
+	std::ofstream out{ name,std::ios::out | std::ios::binary };
+	assert( out.good() );
+
+	const int paddingSize = data.GetWidth() % 4;
+	const int size = 14 + 12 +
+		( data.GetWidth() * data.GetHeight() * 3 ) +
+		( paddingSize * data.GetHeight() );
+
+	// Bitmap file header.
+	PutShort( out,19778 ); // Type.
+	PutInt( out,size ); // Size.
+	PutShort( out,0 ); // Reserved 1.
+	PutShort( out,0 ); // Reserved 2.
+	PutInt( out,14 + 12 ); // Off bits.
+	
+	// Bitmap info header.
+	PutInt( out,14 );
+	PutInt( out,data.GetWidth() ); // Image width.
+	PutInt( out,data.GetHeight() ); // Image height.
+	PutShort( out,1 ); // Planes.
+	PutShort( out,24 ); // Bit count.
+	PutInt( out,0 ); // Compression.
+	PutInt( out,size ); // Image size.
+	PutInt( out,0 ); // X pixels per meter.
+	PutInt( out,0 ); // Y pixels per meter.
+	PutInt( out,0 ); // Clr used.
+	PutInt( out,0 ); // Clr important.
+
+	// Write all the rows to the output file.
+	for( int y = data.GetWidth() - 1; y >= 0; --y )
+	{
+		for( int x = 0; x < data.GetWidth(); ++x )
+		{
+			// PutInt( out,int( data.GetPixel( x,y ).dword ) );
+			const auto pix = data.GetPixel( x,y );
+			out.put( pix.GetB() );
+			out.put( pix.GetG() );
+			out.put( pix.GetR() );
+		}
+		for( int i = 0; i < paddingSize; ++i )
+		{
+			out.put( 0 );
+		}
+	}
+	*/
 }
 
 void WriteToBitmap::PutShort( std::ofstream& out,uint v )
