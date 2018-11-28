@@ -20,11 +20,42 @@ void ImageHandler::Update( Mouse& mouse,
 	const Keyboard& kbd,ToolMode tool,
 	Color& main,Color& off )
 {
+	if( mouse.LeftIsPressed() && ( tool == ToolMode::Brush ||
+		tool == ToolMode::Eraser ) )
+	{
+		mousePos = mouse.GetPos();
+		Vei2 mouseTemp = mouse.GetPos();
+		mouseTemp -= Vei2( artPos );
+		mouseTemp.x /= int( scale.x );
+		mouseTemp.y /= int( scale.y );
+
+		if( kbd.KeyIsPressed( VK_SHIFT ) )
+		{
+			auto col = main;
+			if( tool == ToolMode::Eraser ) col = chroma;
+			art.DrawLine( lastClickPos,mouseTemp,col );
+		}
+
+		lastClickPos = mouseTemp;
+	}
+
 	if( ( kbd.KeyIsPressed( VK_SPACE ) || tool == ToolMode::Hand ) &&
 		mouse.LeftIsPressed() )
 	{
 		artPos += ( mouse.GetPos() - oldMousePos );
 		oldMousePos = mouse.GetPos();
+		return;
+	}
+
+	if( ( kbd.KeyIsPressed( VK_MENU ) || tool == ToolMode::Sampler )
+		&& mouse.LeftIsPressed() )
+	{
+		mousePos = mouse.GetPos();
+		Vei2 mouseTemp = mouse.GetPos();
+		mouseTemp -= Vei2( artPos );
+		mouseTemp.x /= int( scale.x );
+		mouseTemp.y /= int( scale.y );
+		main = art.GetPixel( mouseTemp.x,mouseTemp.y );
 		return;
 	}
 

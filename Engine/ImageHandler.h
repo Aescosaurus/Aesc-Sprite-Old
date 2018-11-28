@@ -46,6 +46,8 @@ private:
 	Vei2 cropEnd = { 0,0 };
 	bool appliedCrop = true;
 
+	Vei2 lastClickPos = { 0,0 };
+
 	const Surface miniHand = { Surface{ "Icons/MiniHand.bmp" },Vei2{ 3,3 } };
 	const Surface miniZoomer = { Surface{ "Icons/MiniZoomer.bmp" },Vei2{ 3,3 } };
 	const Surface miniBucket = { Surface{ "Icons/MiniBucket.bmp" },Vei2{ 3,3 } };

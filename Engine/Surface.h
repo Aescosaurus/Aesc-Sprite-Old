@@ -28,6 +28,7 @@ public:
 
 	void PutPixel( int x,int y,Color c );
 	void DrawRect( int x,int y,int width,int height,Color c );
+	void DrawLine( Vec2 p0,Vec2 p1,Color c );
 	// Copies other surf into this one, even if it's smaller.
 	void CopyInto( const Surface& other );
 
