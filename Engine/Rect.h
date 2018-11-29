@@ -77,21 +77,21 @@ public:
 			SetHeight( GetWidth() );
 		}
 	}
-	constexpr void FloatDivide( const Vec2& amount )
+	constexpr void FloatDivide( const Vei2& amount )
 	{
-		auto temp = float( left );
+		auto temp = int( left );
 		temp /= amount.x;
 		left = int( temp );
 
-		temp = float( right );
+		temp = int( right );
 		temp /= amount.x;
 		right = int( temp );
 
-		temp = float( top );
+		temp = int( top );
 		temp /= amount.y;
 		top = int( temp );
 
-		temp = float( bottom );
+		temp = int( bottom );
 		temp /= amount.y;
 		bottom = int( temp );
 	}

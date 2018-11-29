@@ -2,24 +2,97 @@
 #include "SpriteEffect.h"
 #include "WriteToBitmap.h"
 #include <string>
+#include "Utils.h"
 
-ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool )
+ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool,
+	Mouse& mouse )
 	:
 	art( canvSize.x,canvSize.y ),
 	clipArea( clipArea ),
 	artPos( { float( clipArea.left ),float( clipArea.top ) } ),
 	bgPattern( canvSize.x,canvSize.y ),
-	curTool( curTool )
+	curTool( curTool ),
+	mouse( mouse )
 {
 	art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
 
 	ResizeCanvas( canvSize );
 }
 
-void ImageHandler::Update( Mouse& mouse,
-	const Keyboard& kbd,ToolMode tool,
+void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 	Color& main,Color& off )
 {
+	// This has to be at the top.
+	if( ( kbd.KeyIsPressed( VK_SPACE ) || tool == ToolMode::Hand ) &&
+		mouse.LeftIsPressed() )
+	{
+		artPos += ( mouse.GetPos() - oldMousePos );
+		oldMousePos = mouse.GetPos();
+		return;
+	}
+
+	if( tool == ToolMode::Ruler &&
+		clipArea.ContainsPoint( mouse.GetPos() ) )
+	{
+		if( mouse.RightIsPressed() )
+		{
+			mousePos = mouse.GetPos();
+			Vei2 mouseTemp = mouse.GetPos();
+			mouseTemp -= Vei2( artPos );
+			mouseTemp.x /= int( scale.x );
+			mouseTemp.y /= int( scale.y );
+
+			const auto diff = mouse.GetPos() - lastClickPos;
+			if( abs( diff.x ) > abs( diff.y ) )
+			{
+				aesc::remove_item( xGuidelines,mouseTemp.x );
+			}
+			else
+			{
+				aesc::remove_item( yGuidelines,mouseTemp.y );
+			}
+		}
+		if( mouse.LeftIsPressed() )
+		{
+			mousePos = mouse.GetPos();
+			Vei2 mouseTemp = mouse.GetPos();
+			mouseTemp -= Vei2( artPos );
+			mouseTemp.x /= int( scale.x );
+			mouseTemp.y /= int( scale.y );
+
+			const auto diff = mouse.GetPos() - lastClickPos;
+			if( abs( diff.x ) > abs( diff.y ) )
+			{
+				guidelineX = true;
+				tempGuideline = mouseTemp.x;
+			}
+			else
+			{
+				guidelineX = false;
+				tempGuideline = mouseTemp.y;
+			}
+
+			if( !draggingRuler )
+			{
+				draggingRuler = true;
+				lastClickPos = mouse.GetPos();
+			}
+		}
+		else if( draggingRuler )
+		{
+			if( guidelineX )
+			{
+				xGuidelines.emplace_back( tempGuideline );
+			}
+			else
+			{
+				yGuidelines.emplace_back( tempGuideline );
+			}
+			draggingRuler = false;
+		}
+	}
+	else draggingRuler = false;
+
 	if( mouse.LeftIsPressed() && ( tool == ToolMode::Brush ||
 		tool == ToolMode::Eraser ) )
 	{
@@ -39,14 +112,6 @@ void ImageHandler::Update( Mouse& mouse,
 		lastClickPos = mouseTemp;
 	}
 
-	if( ( kbd.KeyIsPressed( VK_SPACE ) || tool == ToolMode::Hand ) &&
-		mouse.LeftIsPressed() )
-	{
-		artPos += ( mouse.GetPos() - oldMousePos );
-		oldMousePos = mouse.GetPos();
-		return;
-	}
-
 	if( ( kbd.KeyIsPressed( VK_MENU ) || tool == ToolMode::Sampler )
 		&& mouse.LeftIsPressed() )
 	{
@@ -62,7 +127,7 @@ void ImageHandler::Update( Mouse& mouse,
 	if( kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'S' ) )
 	{
-		WriteToBitmap::Write( art,"Icons/Ruler.bmp" ); // From Output/Test.bmp.
+		WriteToBitmap::Write( art,"Output/Test.bmp" );
 	}
 
 	mousePos = mouse.GetPos();
@@ -220,7 +285,7 @@ void ImageHandler::Update( Mouse& mouse,
 				cropStart.y,cropEnd.y };
 			// resizeArea.MoveBy( -artPos );
 
-			resizeArea.FloatDivide( scale );
+			resizeArea.FloatDivide( Vei2( scale ) );
 
 			ResizeCanvas( { abs( resizeArea.GetWidth() ),
 				abs( resizeArea.GetHeight() ) } );
@@ -239,10 +304,6 @@ void ImageHandler::Draw( Graphics& gfx ) const
 	const auto drawPos = Vei2( artPos );
 	const auto drawRect = drawSurf.GetRect();
 
-	// gfx.DrawSprite( drawPos.x,drawPos.y,
-	// 	drawRect,clipArea,
-	// 	bgPattern.GetExpandedBy( Vei2{ bgGrainAmount,bgGrainAmount } ),
-	// 	SpriteEffect::Chroma{ Colors::Magenta } );
 	const auto bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
 	gfx.DrawSprite( drawPos.x,drawPos.y,
 		bigPattern.GetRect(),clipArea,bigPattern,
@@ -251,6 +312,55 @@ void ImageHandler::Draw( Graphics& gfx ) const
 	gfx.DrawSprite( drawPos.x,drawPos.y,drawRect,
 		clipArea,drawSurf,
 		SpriteEffect::Chroma{ Colors::Magenta } );
+
+	// Guidelines stuff.
+	const auto clipTop = float( clipArea.top );
+	const auto clipBot = float( clipArea.bottom );
+	const auto clipLeft = float( clipArea.left );
+	const auto clipRight = float( clipArea.right );
+	for( const auto x : xGuidelines )
+	{
+		const auto pos = float( x * int( scale.x ) +
+			int( artPos.x ) );
+		if( pos > clipLeft && pos < clipRight )
+		{
+			gfx.DrawLine( { pos,clipTop },{ pos,clipBot },
+				Colors::Cyan );
+		}
+	}
+	for( const auto y : yGuidelines )
+	{
+		const auto pos = float( y * int( scale.y ) +
+			int( artPos.y ) );
+		if( pos > clipTop && pos < clipBot )
+		{
+			gfx.DrawLine( { clipLeft,pos },{ clipRight,pos },
+				Colors::Cyan );
+		}
+	}
+	if( draggingRuler )
+	{
+		if( guidelineX )
+		{
+			const auto pos = float( tempGuideline *
+				int( scale.x ) + int( artPos.x ) );
+			if( pos > clipLeft && pos < clipRight )
+			{
+				gfx.DrawLine( { pos,clipTop },{ pos,clipBot },
+					Colors::Cyan );
+			}
+		}
+		else
+		{
+			const auto pos = float( tempGuideline *
+				int( scale.y ) + int( artPos.y ) );
+			if( pos > clipTop && pos < clipBot )
+			{
+				gfx.DrawLine( { clipLeft,pos },{ clipRight,pos },
+					Colors::Cyan );
+			}
+		}
+	}
 
 	DrawCursor( gfx );
 }
@@ -414,6 +524,17 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 			gfx.DrawSprite( mousePos.x,mousePos.y,miniResizer,
 				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
 		}
+		break;
+	case ToolMode::Ruler:
+		if( mouse.LeftIsPressed() )
+		{
+			const auto text = std::to_string( tempGuideline );
+			luckyPixel.DrawText( text,mousePos + Vei2{ 32,0 },Colors::Black,
+				SpriteEffect::Inverse{ Colors::White },gfx );
+		}
+
+		gfx.DrawSprite( mousePos.x,mousePos.y,miniRuler,
+			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
 		break;
 	}
 }

@@ -13,11 +13,12 @@
 class Canvas
 {
 public:
-	Canvas();
+	Canvas( Mouse& mouse );
 
-	void Update( Mouse& mouse,const Keyboard& kbd );
+	void Update( const Keyboard& kbd );
 	void Draw( Graphics& gfx ) const;
 private:
+	Mouse& mouse;
 	const RectI screenArea = { 70,Graphics
 		::ScreenWidth - 4,50,Graphics
 		::ScreenHeight - 4 };

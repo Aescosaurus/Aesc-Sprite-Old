@@ -1,16 +1,17 @@
 #include "Canvas.h"
 
-Canvas::Canvas()
+Canvas::Canvas( Mouse& mouse )
 	:
+	mouse( mouse ),
 	pal( "Palettes/Default.bmp" ),
-	imgHand( screenArea,curTool ),
+	imgHand( screenArea,curTool,mouse ),
 	toolHand( curTool )
 {}
 
-void Canvas::Update( Mouse& mouse,const Keyboard& kbd )
+void Canvas::Update( const Keyboard& kbd )
 {
 	pal.Update( mouse );
-	imgHand.Update( mouse,kbd,curTool,mainCol,offCol );
+	imgHand.Update( kbd,curTool,mainCol,offCol );
 	toolHand.Update( mouse,kbd,mainCol,offCol );
 }
 

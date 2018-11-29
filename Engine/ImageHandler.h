@@ -12,11 +12,11 @@
 class ImageHandler
 {
 public:
-	ImageHandler( const RectI& clipArea,ToolMode& curTool );
+	ImageHandler( const RectI& clipArea,ToolMode& curTool,
+		Mouse& mouse );
 
 	// TODO: Heckin make this whole method cleaner.
-	void Update( Mouse& mouse,
-		const Keyboard& kbd,ToolMode tool,
+	void Update( const Keyboard& kbd,ToolMode tool,
 		Color& main,Color& off );
 	void Draw( Graphics& gfx ) const;
 
@@ -28,6 +28,7 @@ private:
 
 	void DrawCursor( Graphics& gfx ) const;
 private:
+	Mouse& mouse;
 	Vei2 canvSize = { 8,8 };
 	Surface art;
 	const RectI& clipArea;
@@ -48,11 +49,18 @@ private:
 
 	Vei2 lastClickPos = { 0,0 };
 
+	std::vector<int> xGuidelines;
+	std::vector<int> yGuidelines;
+	int tempGuideline = -9999;
+	bool guidelineX = false;
+	bool draggingRuler = false;
+
 	const Surface miniHand = { Surface{ "Icons/MiniHand.bmp" },Vei2{ 3,3 } };
 	const Surface miniZoomer = { Surface{ "Icons/MiniZoomer.bmp" },Vei2{ 3,3 } };
 	const Surface miniBucket = { Surface{ "Icons/MiniBucket.bmp" },Vei2{ 3,3 } };
 	const Surface miniSampler = { Surface{ "Icons/MiniSampler.bmp" },Vei2{ 3,3 } };
 	const Surface miniResizer = { Surface{ "Icons/MiniResizer.bmp" },Vei2{ 3,3 } };
+	const Surface miniRuler = { Surface{ "Icons/MiniRuler.bmp" },Vei2{ 3,3 } };
 
 	const Font luckyPixel = "Fonts/LuckyPixel24x36.bmp";
 };

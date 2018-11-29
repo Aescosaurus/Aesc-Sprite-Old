@@ -162,6 +162,7 @@
     <ClInclude Include="Surface.h" />
     <ClInclude Include="ToolHandler.h" />
     <ClInclude Include="ToolMode.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="WriteToBitmap.h" />
   </ItemGroup>

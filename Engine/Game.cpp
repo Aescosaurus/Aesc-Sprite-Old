@@ -24,7 +24,8 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd )
+	gfx( wnd ),
+	canv( wnd.mouse )
 {}
 
 void Game::Go()
@@ -37,7 +38,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	canv.Update( wnd.mouse,wnd.kbd );
+	canv.Update( wnd.kbd );
 }
 
 void Game::ComposeFrame()
