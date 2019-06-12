@@ -21,12 +21,12 @@ public:
 	void Draw( Graphics& gfx ) const;
 
 	void CenterImage();
+	void DrawCursor( Graphics& gfx ) const;
 private:
 	// Recursive, call to fill until hitting "walls".
 	void TryFillPlusAt( const Vei2& pos,Color c,Color baseFill );
 	void ResizeCanvas( const Vei2& newSize );
 
-	void DrawCursor( Graphics& gfx ) const;
 private:
 	Mouse& mouse;
 	Vei2 canvSize = { 8,8 };
@@ -38,6 +38,7 @@ private:
 
 	Vei2 mousePos = { 0,0 };
 	Vei2 oldMousePos = { 0,0 };
+	bool clickingLastFrame = false;
 	ToolMode& curTool;
 	// static constexpr int bgGrainAmount = 10;
 	Surface bgPattern;
@@ -61,6 +62,7 @@ private:
 	const Surface miniSampler = { Surface{ "Icons/MiniSampler.bmp" },Vei2{ 3,3 } };
 	const Surface miniResizer = { Surface{ "Icons/MiniResizer.bmp" },Vei2{ 3,3 } };
 	const Surface miniRuler = { Surface{ "Icons/MiniRuler.bmp" },Vei2{ 3,3 } };
+	const Surface miniPointer = { Surface{ "Icons/MiniPointer.bmp" },Vei2{ 3,3 } };
 
 	const Font luckyPixel = "Fonts/LuckyPixel24x36.bmp";
 };

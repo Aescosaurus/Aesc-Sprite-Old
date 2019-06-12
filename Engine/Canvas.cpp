@@ -28,4 +28,5 @@ void Canvas::Draw( Graphics& gfx ) const
 
 	imgHand.Draw( gfx );
 	toolHand.Draw( gfx );
+	imgHand.DrawCursor( gfx );
 }

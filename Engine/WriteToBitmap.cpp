@@ -37,7 +37,7 @@ void WriteToBitmap::Write( const Surface& data,
 	PutInt( out,0 ); // Important colors.
 
 	// Write all the rows to the output file.
-	for( int y = data.GetWidth() - 1; y >= 0; --y )
+	for( int y = data.GetHeight() - 1; y >= 0; --y )
 	{
 		for( int x = 0; x < data.GetWidth(); ++x )
 		{

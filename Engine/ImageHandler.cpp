@@ -296,6 +296,7 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 	}
 
 	oldMousePos = mouse.GetPos();
+	clickingLastFrame = mouse.LeftIsPressed();
 }
 
 void ImageHandler::Draw( Graphics& gfx ) const
@@ -362,7 +363,7 @@ void ImageHandler::Draw( Graphics& gfx ) const
 		}
 	}
 
-	DrawCursor( gfx );
+	// DrawCursor( gfx );
 }
 
 void ImageHandler::CenterImage()
@@ -461,80 +462,82 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 	const Color cursorCol = art.GetExpandedBy( scale )
 		.GetRect().GetMovedBy( artPos ).ContainsPoint( mousePos )
 		? Colors::DarkGray : Colors::LightGray;
-	switch( curTool )
+	if( clipArea.ContainsPoint( mouse.GetPos() ) )
 	{
-	case ToolMode::Brush:
-	{
-		const auto rect = DrawSquare( cursorCol,gfx );
-		if( rect.IsContainedBy( clipArea ) )
+		switch( curTool )
 		{
+		case ToolMode::Brush:
+		{
+			const auto rect = DrawSquare( cursorCol,gfx );
 			gfx.DrawLine( mousePos + Vei2::Left() * ( rect.GetWidth() / 4 ),
 				mousePos + Vei2::Right() * ( rect.GetWidth() / 4 ),cursorCol );
 			gfx.DrawLine( mousePos + Vei2::Up() * ( rect.GetHeight() / 4 ),
 				mousePos + Vei2::Down() * ( rect.GetHeight() / 4 ),cursorCol );
 		}
-	}
-	break;
-	case ToolMode::Eraser:
-	{
-		const auto rect = DrawSquare( cursorCol,gfx );
-		if( rect.IsContainedBy( clipArea ) )
+		break;
+		case ToolMode::Eraser:
 		{
+			const auto rect = DrawSquare( cursorCol,gfx );
 			gfx.DrawLine( mousePos + Vei2::Left() * ( rect.GetWidth() / 8 ),
 				mousePos + Vei2::Right() * ( rect.GetWidth() / 8 ),cursorCol );
 		}
-	}
-	break;
-	case ToolMode::Hand:
-		gfx.DrawSprite( mousePos.x,mousePos.y,miniHand,
-			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
 		break;
-	case ToolMode::Zoomer:
-		gfx.DrawSprite( mousePos.x,mousePos.y,miniZoomer,
-			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
-		break;
-	case ToolMode::Bucket:
-		gfx.DrawSprite( mousePos.x,mousePos.y,miniBucket,
-			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
-		break;
-	case ToolMode::Sampler:
-		gfx.DrawSprite( mousePos.x,mousePos.y,miniSampler,
-			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
-		break;
-	case ToolMode::Resizer:
-		RectI resizeArea = { cropStart.x,cropEnd.x,
-			cropStart.y,cropEnd.y };
-
-		if( resizeArea.IsContainedBy( clipArea ) && !canCrop )
-		{
-			gfx.DrawHitboxInverse( resizeArea );
-		}
-
-		if( !canCrop )
-		{
-			resizeArea.FloatDivide( Vec2( Vei2( scale ) ) );
-
-			const auto text = std::to_string( resizeArea.GetWidth() ) +
-				"x" + std::to_string( resizeArea.GetHeight() );
-			luckyPixel.DrawText( text,mousePos,Colors::Black,
-				SpriteEffect::Inverse{ Colors::White },gfx );
-		}
-		else
-		{
-			gfx.DrawSprite( mousePos.x,mousePos.y,miniResizer,
+		case ToolMode::Hand:
+			gfx.DrawSprite( mouse.GetPosX(),mouse.GetPosY(),miniHand,
 				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
-		}
-		break;
-	case ToolMode::Ruler:
-		if( mouse.LeftIsPressed() )
-		{
-			const auto text = std::to_string( tempGuideline );
-			luckyPixel.DrawText( text,mousePos + Vei2{ 32,0 },Colors::Black,
-				SpriteEffect::Inverse{ Colors::White },gfx );
-		}
+			break;
+		case ToolMode::Zoomer:
+			gfx.DrawSprite( mousePos.x,mousePos.y,miniZoomer,
+				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+			break;
+		case ToolMode::Bucket:
+			gfx.DrawSprite( mousePos.x,mousePos.y,miniBucket,
+				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+			break;
+		case ToolMode::Sampler:
+			gfx.DrawSprite( mousePos.x,mousePos.y,miniSampler,
+				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+			break;
+		case ToolMode::Resizer:
+			RectI resizeArea = { cropStart.x,cropEnd.x,
+				cropStart.y,cropEnd.y };
 
-		gfx.DrawSprite( mousePos.x,mousePos.y,miniRuler,
-			SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
-		break;
+			if( resizeArea.IsContainedBy( clipArea ) && !canCrop )
+			{
+				gfx.DrawHitboxInverse( resizeArea );
+			}
+
+			if( !canCrop )
+			{
+				resizeArea.FloatDivide( Vec2( Vei2( scale ) ) );
+
+				const auto text = std::to_string( resizeArea.GetWidth() ) +
+					"x" + std::to_string( resizeArea.GetHeight() );
+				luckyPixel.DrawText( text,mousePos,Colors::Black,
+					SpriteEffect::Inverse{ Colors::White },gfx );
+			}
+			else
+			{
+				gfx.DrawSprite( mousePos.x,mousePos.y,miniResizer,
+					SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+			}
+			break;
+		case ToolMode::Ruler:
+			if( mouse.LeftIsPressed() )
+			{
+				const auto text = std::to_string( tempGuideline );
+				luckyPixel.DrawText( text,mousePos + Vei2{ 32,0 },Colors::Black,
+					SpriteEffect::Inverse{ Colors::White },gfx );
+			}
+
+			gfx.DrawSprite( mousePos.x,mousePos.y,miniRuler,
+				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+			break;
+		}
+	}
+	else
+	{
+		gfx.DrawSprite( mouse.GetPosX(),mouse.GetPosY(),
+			miniPointer,SpriteEffect::Inverse{ Colors::Magenta } );
 	}
 }

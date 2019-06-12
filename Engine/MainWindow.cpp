@@ -47,7 +47,7 @@ MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs )
 	wr.bottom = Graphics::ScreenHeight + wr.top;
 	AdjustWindowRect( &wr,WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,FALSE );
 	hWnd = CreateWindow( wndClassName,L"Chili DirectX Framework",
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU | WS_MAXIMIZEBOX,
 		wr.left,wr.top,wr.right - wr.left,wr.bottom - wr.top,
 		nullptr,nullptr,hInst,this );
 
@@ -162,6 +162,7 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 		POINTS pt = MAKEPOINTS( lParam );
 		if( pt.x > 0 && pt.x < Graphics::ScreenWidth && pt.y > 0 && pt.y < Graphics::ScreenHeight )
 		{
+			while( ShowCursor( false ) >= 0 );
 			mouse.OnMouseMove( pt.x,pt.y );
 			if( !mouse.IsInWindow() )
 			{
@@ -171,6 +172,7 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 		}
 		else
 		{
+			while( ShowCursor( true ) <= 1 );
 			if( wParam & (MK_LBUTTON | MK_RBUTTON) )
 			{
 				pt.x = std::max( short( 0 ),pt.x );
