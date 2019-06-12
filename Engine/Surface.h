@@ -50,6 +50,18 @@ public:
 	Surface GetClipped( const RectI& clip ) const;
 
 	const std::vector<Color>& GetRawPixelData() const;
+
+	bool operator!=( const Surface& rhs ) const
+	{
+		for( int i = 0; i < int( pixels.size() ); ++i )
+		{
+			if( pixels[i] != rhs.pixels[i] )
+			{
+				return( true );
+			}
+		}
+		return( false );
+	}
 private:
 	std::vector<Color> pixels;
 	int width;

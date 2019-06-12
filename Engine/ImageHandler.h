@@ -43,6 +43,9 @@ private:
 	// static constexpr int bgGrainAmount = 10;
 	Surface bgPattern;
 
+	Surface drawSurf;
+	Surface bigPattern;
+
 	Vei2 cropStart = { 0,0 };
 	bool canCrop = false;
 	Vei2 cropEnd = { 0,0 };

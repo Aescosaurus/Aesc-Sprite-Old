@@ -12,11 +12,16 @@ ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool,
 	artPos( { float( clipArea.left ),float( clipArea.top ) } ),
 	bgPattern( canvSize.x,canvSize.y ),
 	curTool( curTool ),
-	mouse( mouse )
+	mouse( mouse ),
+	drawSurf( art.GetExpandedBy( Vei2( scale ) ) ),
+	bigPattern( bgPattern.GetExpandedBy( Vei2( scale ) ) )
 {
 	art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
 
 	ResizeCanvas( canvSize );
+
+	drawSurf = art.GetExpandedBy( Vei2( scale ) );
+	bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
 }
 
 void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
@@ -30,6 +35,9 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		oldMousePos = mouse.GetPos();
 		return;
 	}
+
+	const auto oldScale = scale;
+	const auto oldArt = art;
 
 	if( tool == ToolMode::Ruler &&
 		clipArea.ContainsPoint( mouse.GetPos() ) )
@@ -136,8 +144,8 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 	if( ( tool == ToolMode::Brush || tool == ToolMode::Eraser ||
 		tool == ToolMode::Bucket || tool == ToolMode::Sampler ) &&
 		clipArea.ContainsPoint( Vei2( mouseTemp ) ) &&
-		art.GetExpandedBy( Vei2( scale ) ).GetRect()
-		.GetMovedBy( artPos ).ContainsPoint( Vei2( mouseTemp ) ) )
+		drawSurf.GetRect().GetMovedBy( artPos )
+		.ContainsPoint( Vei2( mouseTemp ) ) )
 	{
 		mouseTemp -= Vei2( artPos );
 		mouseTemp.x /= int( scale.x );
@@ -295,17 +303,22 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		}
 	}
 
+	if( scale.x != oldScale.x || scale.y != oldScale.y ||
+		art != oldArt )
+	{
+		drawSurf = art.GetExpandedBy( Vei2( scale ) );
+		bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
+	}
+
 	oldMousePos = mouse.GetPos();
 	clickingLastFrame = mouse.LeftIsPressed();
 }
 
 void ImageHandler::Draw( Graphics& gfx ) const
 {
-	const Surface drawSurf = art.GetExpandedBy( Vei2( scale ) );
 	const auto drawPos = Vei2( artPos );
 	const auto drawRect = drawSurf.GetRect();
 
-	const auto bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
 	gfx.DrawSprite( drawPos.x,drawPos.y,
 		bigPattern.GetRect(),clipArea,bigPattern,
 		SpriteEffect::Chroma{ Colors::Magenta } );
