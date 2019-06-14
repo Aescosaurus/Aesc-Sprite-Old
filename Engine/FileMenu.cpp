@@ -17,10 +17,13 @@ bool FileMenu::Update( const Mouse& mouse,const Keyboard& kbd )
 	{
 		wnd.HideCursor( false );
 		const auto path = FileOpener::OpenFile();
-		Surface temp = path;
-		if( path.substr( path.length() - 4 ) == ".bmp" )
+		if( path.length() > 0 )
 		{
-			art.CopyInto( temp );
+			if( path.substr( path.length() - 4 ) == ".bmp" )
+			{
+				Surface temp = path;
+				art.CopyInto( temp );
+			}
 		}
 		wnd.HideCursor( true );
 

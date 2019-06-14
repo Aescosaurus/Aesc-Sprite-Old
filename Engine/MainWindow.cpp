@@ -47,7 +47,7 @@ MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs )
 	wr.bottom = Graphics::ScreenHeight + wr.top;
 	AdjustWindowRect( &wr,WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,FALSE );
 	hWnd = CreateWindow( wndClassName,L"Chili DirectX Framework",
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU | WS_MAXIMIZEBOX,
+		WS_OVERLAPPEDWINDOW,
 		wr.left,wr.top,wr.right - wr.left,wr.bottom - wr.top,
 		nullptr,nullptr,hInst,this );
 
