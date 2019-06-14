@@ -99,6 +99,15 @@ bool MainWindow::ProcessMessage()
 	return true;
 }
 
+void MainWindow::HideCursor( bool hidden )
+{
+	hidingCursor = hidden;
+	if( !hidden )
+	{
+		while( ShowCursor( true ) <= 0 );
+	}
+}
+
 LRESULT WINAPI MainWindow::_HandleMsgSetup( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 {
 	// use create parameter passed in from CreateWindow() to store window class pointer at WinAPI side
@@ -162,7 +171,7 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 		POINTS pt = MAKEPOINTS( lParam );
 		if( pt.x > 0 && pt.x < Graphics::ScreenWidth && pt.y > 0 && pt.y < Graphics::ScreenHeight )
 		{
-			while( ShowCursor( false ) >= 0 );
+			if( hidingCursor ) while( ShowCursor( false ) >= 0 );
 			mouse.OnMouseMove( pt.x,pt.y );
 			if( !mouse.IsInWindow() )
 			{

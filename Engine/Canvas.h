@@ -9,11 +9,13 @@
 #include "ImageHandler.h"
 #include "ToolMode.h"
 #include "ToolHandler.h"
+#include "FileMenu.h"
+#include "MainWindow.h"
 
 class Canvas
 {
 public:
-	Canvas( Mouse& mouse );
+	Canvas( Mouse& mouse,MainWindow& wnd );
 
 	void Update( const Keyboard& kbd );
 	void Draw( Graphics& gfx ) const;
@@ -30,4 +32,5 @@ private:
 	ImageHandler imgHand;
 	ToolMode curTool = ToolMode::Brush;
 	ToolHandler toolHand;
+	FileMenu fMenu;
 };

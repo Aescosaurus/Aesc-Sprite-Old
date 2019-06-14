@@ -21,12 +21,14 @@ public:
 	void Draw( Graphics& gfx ) const;
 
 	void CenterImage();
+	void UpdateArt();
+	Surface& GetArt();
+
 	void DrawCursor( Graphics& gfx ) const;
 private:
 	// Recursive, call to fill until hitting "walls".
 	void TryFillPlusAt( const Vei2& pos,Color c,Color baseFill );
 	void ResizeCanvas( const Vei2& newSize );
-
 private:
 	Mouse& mouse;
 	Vei2 canvSize = { 8,8 };

@@ -1,6 +1,6 @@
 #include "ImageHandler.h"
 #include "SpriteEffect.h"
-#include "WriteToBitmap.h"
+// #include "WriteToBitmap.h"
 #include <string>
 #include "Utils.h"
 
@@ -132,11 +132,11 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		return;
 	}
 
-	if( kbd.KeyIsPressed( VK_CONTROL ) &&
-		kbd.KeyIsPressed( 'S' ) )
-	{
-		WriteToBitmap::Write( art,"Output/Test.bmp" );
-	}
+	// if( kbd.KeyIsPressed( VK_CONTROL ) &&
+	// 	kbd.KeyIsPressed( 'S' ) )
+	// {
+	// 	WriteToBitmap::Write( art,"Output/Test.bmp" );
+	// }
 
 	mousePos = mouse.GetPos();
 	Vei2 mouseTemp = mouse.GetPos();
@@ -306,8 +306,7 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 	if( scale.x != oldScale.x || scale.y != oldScale.y ||
 		art != oldArt )
 	{
-		drawSurf = art.GetExpandedBy( Vei2( scale ) );
-		bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
+		UpdateArt();
 	}
 
 	oldMousePos = mouse.GetPos();
@@ -386,6 +385,17 @@ void ImageHandler::CenterImage()
 	artPos = Vec2( clipArea.GetSize() ) / 2.0f -
 		Vec2( artRect.GetSize() ) / 2.0f +
 		Vec2{ float( clipArea.left ),float( clipArea.top ) };
+}
+
+void ImageHandler::UpdateArt()
+{
+	drawSurf = art.GetExpandedBy( Vei2( scale ) );
+	bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
+}
+
+Surface& ImageHandler::GetArt()
+{
+	return( art );
 }
 
 void ImageHandler::TryFillPlusAt( const Vei2& pos,Color c,Color baseFill )

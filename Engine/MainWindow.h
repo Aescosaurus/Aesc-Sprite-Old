@@ -67,6 +67,7 @@ public:
 	{
 		return args;
 	}
+	void HideCursor( bool hidden );
 private:
 	static LRESULT WINAPI _HandleMsgSetup( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam );
 	static LRESULT WINAPI _HandleMsgThunk( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam );
@@ -78,4 +79,5 @@ private:
 	static constexpr wchar_t* wndClassName = L"Chili DirectX Framework Window";
 	HINSTANCE hInst = nullptr;
 	std::wstring args;
+	bool hidingCursor = true;
 };

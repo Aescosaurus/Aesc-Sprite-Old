@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	canv( wnd.mouse )
+	canv( wnd.mouse,wnd )
 {}
 
 void Game::Go()
