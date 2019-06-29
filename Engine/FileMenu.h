@@ -22,7 +22,9 @@ private:
 	MainWindow& wnd;
 
 	Button open = Button{ Surface{ { "Icons/OpenButton.bmp" },Vei2{ 3,3 } },
-		Vei2{ screenArea.right + 5,screenArea.top } };
+		Vei2{ screenArea.right + 5,screenArea.top + 5 } };
+	// Button save = Button{ Surface{ { "Icons/SaveButton.bmp" },Vei2{ 3,3 } },
+	// 	Vei2{ screenArea.right + 5,screenArea.top + 24 + 5 } };
 	Button save = Button{ Surface{ { "Icons/SaveButton.bmp" },Vei2{ 3,3 } },
-		Vei2{ screenArea.right + 5,screenArea.top + 24 + 5 } };
+		Vei2{ screenArea.right + 5 * 2 + 24 * 3,screenArea.top + 5 } };
 };

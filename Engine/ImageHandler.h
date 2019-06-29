@@ -8,6 +8,7 @@
 #include "Keyboard.h"
 #include "ToolMode.h"
 #include "Font.h"
+#include "LayerManager.h"
 
 class ImageHandler
 {
@@ -70,4 +71,6 @@ private:
 	const Surface miniPointer = { Surface{ "Icons/MiniPointer.bmp" },Vei2{ 3,3 } };
 
 	const Font luckyPixel = "Fonts/LuckyPixel24x36.bmp";
+
+	LayerManager layerManager; // How creative.
 };

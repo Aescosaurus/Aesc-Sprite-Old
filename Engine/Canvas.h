@@ -22,7 +22,7 @@ public:
 private:
 	Mouse& mouse;
 	const RectI screenArea = { 70,Graphics
-		::ScreenWidth - 140,50,Graphics
+		::ScreenWidth - 159,50,Graphics
 		::ScreenHeight - 4 };
 	static constexpr int width = 16;
 	static constexpr int height = 16;

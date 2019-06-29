@@ -14,7 +14,8 @@ ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool,
 	curTool( curTool ),
 	mouse( mouse ),
 	drawSurf( art.GetExpandedBy( Vei2( scale ) ) ),
-	bigPattern( bgPattern.GetExpandedBy( Vei2( scale ) ) )
+	bigPattern( bgPattern.GetExpandedBy( Vei2( scale ) ) ),
+	layerManager( clipArea,art )
 {
 	art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
 
@@ -374,6 +375,8 @@ void ImageHandler::Draw( Graphics& gfx ) const
 			}
 		}
 	}
+
+	layerManager.Draw( gfx );
 
 	// DrawCursor( gfx );
 }
