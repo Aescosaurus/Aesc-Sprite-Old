@@ -9,14 +9,18 @@
 class LayerManager
 {
 public:
-	LayerManager( const RectI& clipArea,Surface& artRef );
+	LayerManager( const RectI& clipArea,const Vei2& canvSize );
 
-	void Update( const Keyboard& kbd,const Mouse& mouse );
+	void Update( const Keyboard& kbd,const Mouse& mouse,Surface& art );
 	void Draw( Graphics& gfx ) const;
 
-	// void ResizeCanvas( const Vei2& newSize );
+	void ResizeCanvas( const Vei2& newSize );
 private:
-	Surface& artRef;
+	Vei2 canvSize;
+
+	std::vector<Surface> layers;
+	std::vector<Button> layerButtons;
+	int selectedLayer = 0;
 
 	const RectI drawArea;
 	static constexpr Vei2 padding = { 5,5 };

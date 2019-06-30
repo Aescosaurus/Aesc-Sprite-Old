@@ -131,11 +131,11 @@ public:
 		return Vec2_{ T( 1.0f ),T( 0.0f ) };
 	}
 
-	static constexpr Vec2_ X()
+	constexpr Vec2_ X() const
 	{
 		return( Vec2_{ x,T( 0 ) } );
 	}
-	static constexpr Vec2_ Y()
+	constexpr Vec2_ Y() const
 	{
 		return( Vec2_{ T( 0 ),y } );
 	}
