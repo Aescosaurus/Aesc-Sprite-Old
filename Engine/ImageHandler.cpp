@@ -304,6 +304,8 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		}
 	}
 
+	layerManager.Update( kbd,mouse );
+
 	if( scale.x != oldScale.x || scale.y != oldScale.y ||
 		art != oldArt )
 	{
