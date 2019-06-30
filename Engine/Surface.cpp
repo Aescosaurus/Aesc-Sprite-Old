@@ -189,6 +189,25 @@ void Surface::CopyInto( const Surface& other )
 	}
 }
 
+void Surface::LightCopyInto( const Surface& other )
+{
+	// Don't copy over pixels we don't have or
+	//  into pixels that don't exist.
+	const int minWidth = std::min( GetWidth(),other.GetWidth() );
+	const int minHeight = std::min( GetHeight(),other.GetHeight() );
+
+	for( int y = 0; y < minHeight; ++y )
+	{
+		for( int x = 0; x < minWidth; ++x )
+		{
+			if( GetPixel( x,y ) == Colors::Magenta )
+			{
+				PutPixel( x,y,other.GetPixel( x,y ) );
+			}
+		}
+	}
+}
+
 Color Surface::GetPixel( int x,int y ) const
 {
 	assert( x >= 0 );

@@ -31,6 +31,8 @@ public:
 	void DrawLine( Vec2 p0,Vec2 p1,Color c );
 	// Copies other surf into this one, even if it's smaller.
 	void CopyInto( const Surface& other );
+	// Copies other surf's pixels into my magenta pixels.
+	void LightCopyInto( const Surface& other );
 
 	Color GetPixel( int x,int y ) const;
 	int GetWidth() const;

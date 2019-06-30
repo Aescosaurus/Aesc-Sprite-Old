@@ -13,6 +13,8 @@ public:
 
 	bool Update( const Mouse& mouse );
 	void Draw( Graphics& gfx ) const;
+
+	const Vei2& GetPos() const;
 private:
 	const Vei2 pos;
 	const Surface image;

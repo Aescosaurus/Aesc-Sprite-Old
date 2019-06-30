@@ -1,4 +1,5 @@
 #include "LayerManager.h"
+#include "SpriteEffect.h"
 
 LayerManager::LayerManager( const RectI& clipArea,const Vei2& canvSize )
 	:
@@ -22,6 +23,8 @@ LayerManager::LayerManager( const RectI& clipArea,const Vei2& canvSize )
 
 void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 {
+	layers[selectedLayer].CopyInto( art );
+
 	if( addLayer.Update( mouse ) ||
 		( kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'N' ) ) )
@@ -31,6 +34,7 @@ void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 			layers.emplace_back( Surface{ canvSize.x,canvSize.y } );
 			layers.back().DrawRect( 0,0,canvSize.x,canvSize.y,Colors::Magenta );
 			++selectedLayer;
+			art.CopyInto( layers[selectedLayer] );
 		}
 	}
 	if( dupeLayer.Update( mouse ) ||
@@ -41,6 +45,7 @@ void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 		{
 			layers.push_back( layers.back() );
 			++selectedLayer;
+			art.CopyInto( layers[selectedLayer] );
 		}
 	}
 	if( removeLayer.Update( mouse ) ||
@@ -50,6 +55,7 @@ void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 		{
 			layers.pop_back();
 			--selectedLayer;
+			art.CopyInto( layers[selectedLayer] );
 		}
 	}
 
@@ -58,6 +64,7 @@ void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 		if( layerButtons[i].Update( mouse ) )
 		{
 			selectedLayer = i;
+			art.CopyInto( layers[selectedLayer] );
 		}
 	}
 }
@@ -73,6 +80,13 @@ void LayerManager::Draw( Graphics& gfx ) const
 	for( int i = 0; i < int( layers.size() ); ++i )
 	{
 		layerButtons[i].Draw( gfx );
+
+		if( i == selectedLayer )
+		{
+			gfx.DrawSprite( layerButtons[i].GetPos().x + 32 * 3 + 5,
+				layerButtons[i].GetPos().y,layerSelectedButton,
+				SpriteEffect::Chroma{ Colors::Magenta } );
+		}
 	}
 
 	addLayer.Draw( gfx );
@@ -90,4 +104,9 @@ void LayerManager::ResizeCanvas( const Vei2& newSize )
 		layer = Surface{ newSize.x,newSize.y };
 		layer.CopyInto( temp );
 	}
+}
+
+const std::vector<Surface>& LayerManager::GetLayers() const
+{
+	return( layers );
 }

@@ -15,6 +15,7 @@ public:
 	void Draw( Graphics& gfx ) const;
 
 	void ResizeCanvas( const Vei2& newSize );
+	const std::vector<Surface>& GetLayers() const;
 private:
 	Vei2 canvSize;
 
@@ -35,4 +36,6 @@ private:
 	Button removeLayer = Button{ Surface{ Surface{ "Icons/RemoveLayerButton.bmp" },Vei2{ 3,3 } },
 		Vei2{ drawArea.left + padding.x * 3 + buttonSize.x * 2,
 		drawArea.bottom - padding.y - buttonSize.y } };
+
+	const Surface layerSelectedButton = Surface{ Surface{ "Icons/LayerSelectButton.bmp" },Vei2{ 3,3 } };
 };

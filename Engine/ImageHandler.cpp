@@ -14,8 +14,8 @@ ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool,
 	curTool( curTool ),
 	mouse( mouse ),
 	drawSurf( art.GetExpandedBy( Vei2( scale ) ) ),
-	bigPattern( bgPattern.GetExpandedBy( Vei2( scale ) ) )
-	// layerManager( clipArea,canvSize )
+	bigPattern( bgPattern.GetExpandedBy( Vei2( scale ) ) ),
+	layerManager( clipArea,canvSize )
 {
 	art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
 
@@ -304,7 +304,7 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		}
 	}
 
-	// layerManager.Update( kbd,mouse,art );
+	layerManager.Update( kbd,mouse,art );
 
 	if( scale.x != oldScale.x || scale.y != oldScale.y ||
 		art != oldArt )
@@ -378,7 +378,7 @@ void ImageHandler::Draw( Graphics& gfx ) const
 		}
 	}
 
-	// layerManager.Draw( gfx );
+	layerManager.Draw( gfx );
 
 	// DrawCursor( gfx );
 }
@@ -394,7 +394,12 @@ void ImageHandler::CenterImage()
 
 void ImageHandler::UpdateArt()
 {
-	drawSurf = art.GetExpandedBy( Vei2( scale ) );
+	drawSurf = art;
+	for( const auto& layer : layerManager.GetLayers() )
+	{
+		drawSurf.LightCopyInto( layer );
+	}
+	drawSurf = drawSurf.GetExpandedBy( Vei2( scale ) );
 	bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
 }
 
@@ -469,7 +474,7 @@ void ImageHandler::ResizeCanvas( const Vei2& newSize )
 		}
 	}
 
-	// layerManager.ResizeCanvas( newSize );
+	layerManager.ResizeCanvas( newSize );
 }
 
 void ImageHandler::DrawCursor( Graphics& gfx ) const

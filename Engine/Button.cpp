@@ -41,3 +41,8 @@ void Button::Draw( Graphics& gfx ) const
 			Colors::White,0.5f } );
 	}
 }
+
+const Vei2& Button::GetPos() const
+{
+	return( pos );
+}
