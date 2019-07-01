@@ -14,7 +14,7 @@ class ImageHandler
 {
 public:
 	ImageHandler( const RectI& clipArea,ToolMode& curTool,
-		Mouse& mouse );
+		Mouse& mouse,Keyboard& kbd );
 
 	// TODO: Heckin make this whole method cleaner.
 	void Update( const Keyboard& kbd,ToolMode tool,
@@ -24,14 +24,16 @@ public:
 	void CenterImage();
 	void UpdateArt();
 	Surface& GetArt();
+	void ResizeCanvas( const Vei2& newSize );
+	void CreateNewLayer();
 
 	void DrawCursor( Graphics& gfx ) const;
 private:
 	// Recursive, call to fill until hitting "walls".
 	void TryFillPlusAt( const Vei2& pos,Color c,Color baseFill );
-	void ResizeCanvas( const Vei2& newSize );
 private:
 	Mouse& mouse;
+	Keyboard& kbd;
 	Vei2 canvSize = { 8,8 };
 	Surface art;
 	const RectI& clipArea;

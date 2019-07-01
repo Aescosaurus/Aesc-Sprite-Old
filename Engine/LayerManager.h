@@ -15,6 +15,7 @@ public:
 	void Draw( Graphics& gfx ) const;
 
 	void ResizeCanvas( const Vei2& newSize );
+	void CreateNewLayer( Surface& art );
 
 	const std::vector<Surface>& GetLayers() const;
 	// Returns layer you're hovering.

@@ -208,6 +208,27 @@ void Surface::LightCopyInto( const Surface& other )
 	}
 }
 
+void Surface::Resize( const Vei2& newSize )
+{
+	Surface temp = *this;
+	// const auto oldSize = GetSize();
+	pixels.resize( newSize.x * newSize.y );
+
+	width = newSize.x;
+	height = newSize.y;
+
+	DrawRect( 0,0,width,height,Colors::Magenta );
+	CopyInto( temp );
+
+	// for( int y = oldSize.y; y < height; ++y )
+	// {
+	// 	for( int x = oldSize.x; x < width; ++x )
+	// 	{
+	// 		PutPixel( x,y,Colors::Magenta );
+	// 	}
+	// }
+}
+
 Color Surface::GetPixel( int x,int y ) const
 {
 	assert( x >= 0 );

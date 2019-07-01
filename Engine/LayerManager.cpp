@@ -105,9 +105,21 @@ void LayerManager::ResizeCanvas( const Vei2& newSize )
 
 	for( auto& layer : layers )
 	{
-		Surface temp = layer;
-		layer = Surface{ newSize.x,newSize.y };
-		layer.CopyInto( temp );
+		// Surface temp = layer;
+		// layer = Surface{ newSize.x,newSize.y };
+		// layer.CopyInto( temp );
+		layer.Resize( newSize );
+	}
+}
+
+void LayerManager::CreateNewLayer( Surface& art )
+{
+	if( layers.size() < 7 )
+	{
+		layers.emplace_back( Surface{ canvSize.x,canvSize.y } );
+		layers.back().DrawRect( 0,0,canvSize.x,canvSize.y,Colors::Magenta );
+		selectedLayer = int( layers.size() ) - 1;
+		art.CopyInto( layers[selectedLayer] );
 	}
 }
 

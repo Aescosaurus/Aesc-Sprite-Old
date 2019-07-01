@@ -4,7 +4,7 @@ Canvas::Canvas( Mouse& mouse,MainWindow& wnd )
 	:
 	mouse( mouse ),
 	pal( "Palettes/Default.bmp" ),
-	imgHand( screenArea,curTool,mouse ),
+	imgHand( screenArea,curTool,mouse,wnd.kbd ),
 	toolHand( curTool ),
 	fMenu( screenArea,imgHand.GetArt(),wnd )
 {}
@@ -16,6 +16,8 @@ void Canvas::Update( const Keyboard& kbd )
 	toolHand.Update( mouse,kbd,mainCol,offCol );
 	if( fMenu.Update( mouse,kbd ) )
 	{
+		imgHand.ResizeCanvas( imgHand.GetArt().GetSize() );
+		// imgHand.CreateNewLayer();
 		imgHand.UpdateArt();
 	}
 }

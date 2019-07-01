@@ -22,6 +22,7 @@ bool FileMenu::Update( const Mouse& mouse,const Keyboard& kbd )
 			if( path.substr( path.length() - 4 ) == ".bmp" )
 			{
 				Surface temp = path;
+				art.Resize( Vei2{ temp.GetWidth(),temp.GetHeight() } );
 				art.CopyInto( temp );
 			}
 		}

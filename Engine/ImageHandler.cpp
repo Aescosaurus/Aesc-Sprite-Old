@@ -5,7 +5,7 @@
 #include "Utils.h"
 
 ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool,
-	Mouse& mouse )
+	Mouse& mouse,Keyboard& kbd )
 	:
 	art( canvSize.x,canvSize.y ),
 	clipArea( clipArea ),
@@ -13,6 +13,7 @@ ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool,
 	bgPattern( canvSize.x,canvSize.y ),
 	curTool( curTool ),
 	mouse( mouse ),
+	kbd( kbd ),
 	drawSurf( art.GetExpandedBy( Vei2( scale ) ) ),
 	bigPattern( bgPattern.GetExpandedBy( Vei2( scale ) ) ),
 	layerManager( clipArea,canvSize )
@@ -406,6 +407,8 @@ void ImageHandler::CenterImage()
 
 void ImageHandler::UpdateArt()
 {
+	layerManager.Update( kbd,mouse,art );
+
 	drawSurf = Surface{ art.GetWidth(),art.GetHeight() };
 	drawSurf.DrawRect( 0,0,
 		drawSurf.GetWidth(),drawSurf.GetHeight(),
@@ -484,10 +487,11 @@ void ImageHandler::ResizeCanvas( const Vei2& newSize )
 {
 	canvSize = newSize;
 
-	Surface temp = art;
-	art = Surface{ canvSize.x,canvSize.y };
-	art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
-	art.CopyInto( temp );
+	// Surface temp = art;
+	// art = Surface{ canvSize.x,canvSize.y };
+	// art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),chroma );
+	// art.CopyInto( temp );
+	art.Resize( newSize );
 
 	bgPattern = { canvSize.x,canvSize.y };
 
@@ -509,6 +513,11 @@ void ImageHandler::ResizeCanvas( const Vei2& newSize )
 	}
 
 	layerManager.ResizeCanvas( newSize );
+}
+
+void ImageHandler::CreateNewLayer()
+{
+	layerManager.CreateNewLayer( art );
 }
 
 void ImageHandler::DrawCursor( Graphics& gfx ) const
