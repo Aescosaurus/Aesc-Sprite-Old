@@ -11,17 +11,28 @@ LayerManager::LayerManager( const RectI& clipArea,const Vei2& canvSize )
 	layers.emplace_back( Surface{ canvSize.x,canvSize.y } );
 	layers.back().DrawRect( 0,0,canvSize.x,canvSize.y,Colors::Magenta );
 
-	const auto start = Vei2{ drawArea.left + padding.x,
+	const auto start = Vei2{ drawArea.left + padding.x * 2 + buttonSize.x,
+		drawArea.top + padding.y };
+	const auto start2 = Vei2{ drawArea.left + padding.x,
 		drawArea.top + padding.y };
 	for( int i = 0; i < 7; ++i )
 	{
 		layerButtons.emplace_back( Button{ Surface{ Surface{
 			"Icons/LayerButton.bmp" },Vei2{ 3,3 } },
 			start + ( padding.Y() + buttonSize.Y() ) * i } );
+
+		hideLayerButtons.emplace_back( Button{ Surface{ Surface{
+			"Icons/HideLayerButton.bmp" },Vei2{ 3,3 } },
+			start2 + ( padding.Y() + buttonSize.Y() ) * i } );
+		unhideLayerButtons.emplace_back( Button{ Surface{ Surface{
+			"Icons/UnhideLayerButton.bmp" },Vei2{ 3,3 } },
+			start2 + ( padding.Y() + buttonSize.Y() ) * i } );
+
+		hiddenLayers.emplace_back( false );
 	}
 }
 
-void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
+bool LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 {
 	layers[selectedLayer].CopyInto( art );
 
@@ -71,7 +82,25 @@ void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 			selectedLayer = i;
 			art.CopyInto( layers[selectedLayer] );
 		}
+
+		if( !hiddenLayers[i] )
+		{
+			if( hideLayerButtons[i].Update( mouse ) )
+			{
+				hiddenLayers[i] = true;
+				return( true );
+			}
+		}
+		else
+		{
+			if( unhideLayerButtons[i].Update( mouse ) )
+			{
+				hiddenLayers[i] = false;
+				return( true );
+			}
+		}
 	}
+	return( false );
 }
 
 void LayerManager::Draw( Graphics& gfx ) const
@@ -88,10 +117,13 @@ void LayerManager::Draw( Graphics& gfx ) const
 
 		if( i == selectedLayer )
 		{
-			gfx.DrawSprite( layerButtons[i].GetPos().x + 32 * 3 + 5,
+			gfx.DrawSprite( layerButtons[i].GetPos().x + 27 * 3 + 5,
 				layerButtons[i].GetPos().y,layerSelectedButton,
 				SpriteEffect::Chroma{ Colors::Magenta } );
 		}
+
+		if( !hiddenLayers[i] ) hideLayerButtons[i].Draw( gfx );
+		else unhideLayerButtons[i].Draw( gfx );
 	}
 
 	addLayer.Draw( gfx );
@@ -126,6 +158,11 @@ void LayerManager::CreateNewLayer( Surface& art )
 const std::vector<Surface>& LayerManager::GetLayers() const
 {
 	return( layers );
+}
+
+const std::vector<bool>& LayerManager::GetHiddenLayers() const
+{
+	return( hiddenLayers );
 }
 
 int LayerManager::GetSelectedLayer() const

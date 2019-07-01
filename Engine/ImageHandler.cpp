@@ -305,11 +305,12 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		}
 	}
 
-	layerManager.Update( kbd,mouse,art );
+	const bool willUpdate = layerManager.Update( kbd,mouse,art );
 	const bool isHoveringLayer = layerManager.GetSelectedLayer() != -1;
 
 	if( scale.x != oldScale.x || scale.y != oldScale.y ||
-		art != oldArt || isHoveringLayer || hoveringLastFrame )
+		art != oldArt || isHoveringLayer || hoveringLastFrame ||
+		willUpdate )
 	{
 		if( isHoveringLayer ) hoveringLastFrame = true;
 		else hoveringLastFrame = false;
@@ -415,10 +416,14 @@ void ImageHandler::UpdateArt()
 		Colors::Magenta );
 
 	const auto& layers = layerManager.GetLayers();
+	const auto& hiddenLayers = layerManager.GetHiddenLayers();
 	const auto curSelectedLayer = layerManager.GetSelectedLayer();
 	for( int i = 0; i < int( layers.size() ); ++i )
 	{
-		drawSurf.LightCopyInto( layers[i] );
+		if( !hiddenLayers[i] )
+		{
+			drawSurf.LightCopyInto( layers[i] );
+		}
 		if( ( i == layerManager.GetActualSelectedLayer() &&
 			curSelectedLayer == -1 ) || i == curSelectedLayer )
 		{
@@ -627,9 +632,13 @@ Surface ImageHandler::GetLayeredArt() const
 		temp.GetWidth(),temp.GetHeight(),
 		Colors::Magenta );
 	const auto& layers = layerManager.GetLayers();
+	const auto& hiddenLayers = layerManager.GetHiddenLayers();
 	for( int i = 0; i < int( layers.size() ); ++i )
 	{
-		temp.LightCopyInto( layers[i] );
+		if( !hiddenLayers[i] )
+		{
+			temp.LightCopyInto( layers[i] );
+		}
 	}
 	return( temp );
 }
