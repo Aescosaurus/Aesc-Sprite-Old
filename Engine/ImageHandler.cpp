@@ -332,6 +332,15 @@ void ImageHandler::Draw( Graphics& gfx ) const
 		clipArea,drawSurf,
 		SpriteEffect::Chroma{ Colors::Magenta } );
 
+	if( selectedLayerRect.left != -1 &&
+		selectedLayerRect.right != -1 &&
+		selectedLayerRect.top != -1 &&
+		selectedLayerRect.bottom != -1 )
+	{
+		gfx.DrawHitboxCorners( selectedLayerRect
+			.GetMovedBy( drawPos ),Colors::Gray );
+	}
+
 	// Guidelines stuff.
 	const auto clipTop = float( clipArea.top );
 	const auto clipBot = float( clipArea.bottom );
@@ -401,35 +410,31 @@ void ImageHandler::UpdateArt()
 	drawSurf.DrawRect( 0,0,
 		drawSurf.GetWidth(),drawSurf.GetHeight(),
 		Colors::Magenta );
+
 	const auto& layers = layerManager.GetLayers();
+	const auto curSelectedLayer = layerManager.GetSelectedLayer();
 	for( int i = 0; i < int( layers.size() ); ++i )
 	{
-		if( i == layerManager.GetSelectedLayer() )
+		drawSurf.LightCopyInto( layers[i] );
+		if( ( i == layerManager.GetActualSelectedLayer() &&
+			curSelectedLayer == -1 ) || i == curSelectedLayer )
 		{
-			auto temp = layers[i];
-			for( int y = 0; y < temp.GetHeight(); ++y )
-			{
-				for( int x = 0; x < temp.GetWidth(); ++x )
-				{
-					auto pix = temp.GetPixel( x,y );
-					if( pix != Colors::Magenta )
-					{
-						pix.SetR( 255 - pix.GetR() );
-						pix.SetG( 255 - pix.GetG() );
-						pix.SetB( 255 - pix.GetB() );
-					}
-					temp.PutPixel( x,y,pix );
-				}
-			}
-			drawSurf.LightCopyInto( temp );
-		}
-		else
-		{
-			drawSurf.LightCopyInto( layers[i] );
+			selectedLayerRect = layers[i].GetNonMagentaRect();
 		}
 	}
 	drawSurf = drawSurf.GetExpandedBy( Vei2( scale ) );
 	bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
+	
+	if( selectedLayerRect.left != -1 &&
+		selectedLayerRect.right != -1 &&
+		selectedLayerRect.top != -1 &&
+		selectedLayerRect.bottom != -1 )
+	{
+		++selectedLayerRect.right;
+		++selectedLayerRect.bottom;
+		selectedLayerRect = selectedLayerRect
+			.GetExpandedByScale( Vei2( scale ) );
+	}
 }
 
 Surface& ImageHandler::GetArt()

@@ -106,6 +106,16 @@ public:
 	{
 		return Rect_( left - offset,right + offset,top - offset,bottom + offset );
 	}
+	constexpr Rect_ GetExpandedByScale( const Vec2_<T>& scale ) const
+	{
+		RectI temp = *this;
+		// temp.MoveTo( Vei2{ 0,0 } );
+		temp.left *= scale.x;
+		temp.top *= scale.y;
+		temp.right *= scale.x;
+		temp.bottom *= scale.y;
+		return( temp );
+	}
 	constexpr Vec2_<T> GetCenter() const
 	{
 		return Vec2_<T>( ( left + right ) / T( 2 ),( top + bottom ) / T( 2 ) );

@@ -123,3 +123,8 @@ int LayerManager::GetSelectedLayer() const
 	return( -1 );
 }
 
+int LayerManager::GetActualSelectedLayer() const
+{
+	return( selectedLayer );
+}
+

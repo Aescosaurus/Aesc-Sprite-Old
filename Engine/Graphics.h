@@ -95,6 +95,30 @@ public:
 		DrawLineInverse( { float( hitbox.left ),float( hitbox.bottom ) },
 			{ float( hitbox.left ),float( hitbox.top ) } );
 	}
+	void DrawHitboxCorners( const RectI& rect,Color c )
+	{
+		DrawHitbox( rect,c );
+
+		const int cornerSize = 4;
+
+		const RectI topLeft = RectI{ rect.left - cornerSize,
+			rect.left + cornerSize,rect.top - cornerSize,
+			rect.top + cornerSize };
+		const RectI topRight = RectI{ rect.right - cornerSize,
+			rect.right + cornerSize,rect.top - cornerSize,
+			rect.top + cornerSize };
+		const RectI botLeft = RectI{ rect.left - cornerSize,
+			rect.left + cornerSize,rect.bottom - cornerSize,
+			rect.bottom + cornerSize };
+		const RectI botRight = RectI{ rect.right - cornerSize,
+			rect.right + cornerSize,rect.bottom - cornerSize,
+			rect.bottom + cornerSize };
+
+		DrawHitbox( topLeft,c );
+		DrawHitbox( topRight,c );
+		DrawHitbox( botLeft,c );
+		DrawHitbox( botRight,c );
+	}
 	template<typename E>
 	void DrawSprite( int x,int y,const Surface& s,E effect,bool reversed = false )
 	{

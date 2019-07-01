@@ -17,7 +17,9 @@ public:
 	void ResizeCanvas( const Vei2& newSize );
 
 	const std::vector<Surface>& GetLayers() const;
+	// Returns layer you're hovering.
 	int GetSelectedLayer() const;
+	int GetActualSelectedLayer() const;
 private:
 	Vei2 canvSize;
 

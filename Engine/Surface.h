@@ -39,6 +39,7 @@ public:
 	int GetHeight() const;
 	Vei2 GetSize() const;
 	RectI GetRect() const;
+	RectI GetNonMagentaRect() const;
 
 	// Expand a surface by amount.
 	Surface GetExpandedBy( const Vei2& amount ) const;

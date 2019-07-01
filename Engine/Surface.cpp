@@ -237,6 +237,69 @@ RectI Surface::GetRect() const
 	return{ 0,width,0,height };
 }
 
+RectI Surface::GetNonMagentaRect() const
+{
+	RectI temp = { -1,-1,-1,-1 };
+
+	// Set rect top.
+	for( int y = 0; y < height; ++y )
+	{
+		for( int x = 0; x < width; ++x )
+		{
+			if( GetPixel( x,y ) != Colors::Magenta )
+			{
+				temp.top = y;
+				break;
+			}
+		}
+		if( temp.top != -1 ) break;
+	}
+
+	// Set rect bot.
+	for( int y = height - 1; y >= 0; --y )
+	{
+		for( int x = 0; x < width; ++x )
+		{
+			if( GetPixel( x,y ) != Colors::Magenta )
+			{
+				temp.bottom = y;
+				break;
+			}
+		}
+		if( temp.bottom != -1 ) break;
+	}
+
+	// Set rect left.
+	for( int x = 0; x < width; ++x )
+	{
+		for( int y = 0; y < height; ++y )
+		{
+			if( GetPixel( x,y ) != Colors::Magenta )
+			{
+				temp.left = x;
+				break;
+			}
+		}
+		if( temp.left != -1 ) break;
+	}
+
+	// Set rect right.
+	for( int x = width - 1; x >= 0; --x )
+	{
+		for( int y = 0; y < height; ++y )
+		{
+			if( GetPixel( x,y ) != Colors::Magenta )
+			{
+				temp.right = x;
+				break;
+			}
+		}
+		if( temp.right != -1 ) break;
+	}
+
+	return( temp );
+}
+
 Surface Surface::GetExpandedBy( const Vei2& amount ) const
 {
 	Surface bigger = { amount.x * GetWidth(),amount.y * GetHeight() };

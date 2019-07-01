@@ -74,4 +74,5 @@ private:
 
 	LayerManager layerManager; // How creative.
 	bool hoveringLastFrame = false;
+	RectI selectedLayerRect = { -1,-1,-1,-1 };
 };
