@@ -28,6 +28,7 @@ public:
 	void CreateNewLayer();
 
 	void DrawCursor( Graphics& gfx ) const;
+	Surface GetLayeredArt() const;
 private:
 	// Recursive, call to fill until hitting "walls".
 	void TryFillPlusAt( const Vei2& pos,Color c,Color baseFill );

@@ -14,7 +14,7 @@ void Canvas::Update( const Keyboard& kbd )
 	pal.Update( mouse );
 	imgHand.Update( kbd,curTool,mainCol,offCol );
 	toolHand.Update( mouse,kbd,mainCol,offCol );
-	if( fMenu.Update( mouse,kbd ) )
+	if( fMenu.Update( mouse,kbd,imgHand ) )
 	{
 		imgHand.ResizeCanvas( imgHand.GetArt().GetSize() );
 		// imgHand.CreateNewLayer();

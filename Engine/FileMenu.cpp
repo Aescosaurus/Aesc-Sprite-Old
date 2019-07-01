@@ -10,7 +10,7 @@ FileMenu::FileMenu( const RectI& screenArea,Surface& art,
 	wnd( wnd )
 {}
 
-bool FileMenu::Update( const Mouse& mouse,const Keyboard& kbd )
+bool FileMenu::Update( const Mouse& mouse,const Keyboard& kbd,ImageHandler& imgHand )
 {
 	if( open.Update( mouse ) || ( kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'O' ) ) )
@@ -23,6 +23,7 @@ bool FileMenu::Update( const Mouse& mouse,const Keyboard& kbd )
 			{
 				Surface temp = path;
 				art.Resize( Vei2{ temp.GetWidth(),temp.GetHeight() } );
+				imgHand.CreateNewLayer();
 				art.CopyInto( temp );
 			}
 		}
@@ -41,7 +42,7 @@ bool FileMenu::Update( const Mouse& mouse,const Keyboard& kbd )
 			{
 				path += ".bmp";
 			}
-			WriteToBitmap::Write( art,path );
+			WriteToBitmap::Write( imgHand.GetLayeredArt(),path );
 		}
 		wnd.HideCursor( true );
 

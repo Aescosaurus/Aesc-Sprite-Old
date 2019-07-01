@@ -7,6 +7,7 @@
 #include "Graphics.h"
 #include "Button.h"
 #include "MainWindow.h"
+#include "ImageHandler.h"
 
 class FileMenu
 {
@@ -14,7 +15,7 @@ public:
 	FileMenu( const RectI& screenArea,Surface& art,
 		MainWindow& wnd );
 
-	bool Update( const Mouse& mouse,const Keyboard& kbd );
+	bool Update( const Mouse& mouse,const Keyboard& kbd,ImageHandler& imgHand );
 	void Draw( Graphics& gfx ) const;
 private:
 	const RectI& screenArea;

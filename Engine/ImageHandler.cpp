@@ -619,3 +619,14 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 			miniPointer,SpriteEffect::Inverse{ Colors::Magenta } );
 	}
 }
+
+Surface ImageHandler::GetLayeredArt() const
+{
+	auto temp = Surface{ art.GetWidth(),art.GetHeight() };
+	const auto& layers = layerManager.GetLayers();
+	for( int i = 0; i < int( layers.size() ); ++i )
+	{
+		temp.LightCopyInto( layers[i] );
+	}
+	return( temp );
+}
