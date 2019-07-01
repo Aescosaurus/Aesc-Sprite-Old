@@ -33,7 +33,7 @@ void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 		{
 			layers.emplace_back( Surface{ canvSize.x,canvSize.y } );
 			layers.back().DrawRect( 0,0,canvSize.x,canvSize.y,Colors::Magenta );
-			++selectedLayer;
+			selectedLayer = int( layers.size() ) - 1;
 			art.CopyInto( layers[selectedLayer] );
 		}
 	}
@@ -43,8 +43,10 @@ void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 	{
 		if( layers.size() < 7 )
 		{
-			layers.push_back( layers.back() );
-			++selectedLayer;
+			// layers.push_back( layers.back() );
+			// ++selectedLayer;
+			layers.emplace_back( Surface{ layers[selectedLayer] } );
+			selectedLayer = int( layers.size() ) - 1;
 			art.CopyInto( layers[selectedLayer] );
 		}
 	}
@@ -53,8 +55,11 @@ void LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 	{
 		if( layers.size() > 1 )
 		{
-			layers.pop_back();
+			// layers.pop_back();
+			layers.erase( layers.begin() + selectedLayer );
 			--selectedLayer;
+			if( selectedLayer < 0 ) selectedLayer = 0;
+			if( selectedLayer > int( layers.size() ) ) selectedLayer = int( layers.size() );
 			art.CopyInto( layers[selectedLayer] );
 		}
 	}
