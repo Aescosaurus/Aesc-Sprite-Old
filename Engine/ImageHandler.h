@@ -73,4 +73,5 @@ private:
 	const Font luckyPixel = "Fonts/LuckyPixel24x36.bmp";
 
 	LayerManager layerManager; // How creative.
+	bool hoveringLastFrame = false;
 };

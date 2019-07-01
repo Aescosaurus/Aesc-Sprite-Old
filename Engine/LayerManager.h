@@ -15,7 +15,9 @@ public:
 	void Draw( Graphics& gfx ) const;
 
 	void ResizeCanvas( const Vei2& newSize );
+
 	const std::vector<Surface>& GetLayers() const;
+	int GetSelectedLayer() const;
 private:
 	Vei2 canvSize;
 

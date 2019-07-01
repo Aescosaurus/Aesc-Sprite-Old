@@ -305,10 +305,13 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 	}
 
 	layerManager.Update( kbd,mouse,art );
+	const bool isHoveringLayer = layerManager.GetSelectedLayer() != -1;
 
 	if( scale.x != oldScale.x || scale.y != oldScale.y ||
-		art != oldArt )
+		art != oldArt || isHoveringLayer || hoveringLastFrame )
 	{
+		if( isHoveringLayer ) hoveringLastFrame = true;
+		else hoveringLastFrame = false;
 		UpdateArt();
 	}
 
@@ -394,10 +397,36 @@ void ImageHandler::CenterImage()
 
 void ImageHandler::UpdateArt()
 {
-	drawSurf = art;
-	for( const auto& layer : layerManager.GetLayers() )
+	drawSurf = Surface{ art.GetWidth(),art.GetHeight() };
+	drawSurf.DrawRect( 0,0,
+		drawSurf.GetWidth(),drawSurf.GetHeight(),
+		Colors::Magenta );
+	const auto& layers = layerManager.GetLayers();
+	for( int i = 0; i < int( layers.size() ); ++i )
 	{
-		drawSurf.LightCopyInto( layer );
+		if( i == layerManager.GetSelectedLayer() )
+		{
+			auto temp = layers[i];
+			for( int y = 0; y < temp.GetHeight(); ++y )
+			{
+				for( int x = 0; x < temp.GetWidth(); ++x )
+				{
+					auto pix = temp.GetPixel( x,y );
+					if( pix != Colors::Magenta )
+					{
+						pix.SetR( 255 - pix.GetR() );
+						pix.SetG( 255 - pix.GetG() );
+						pix.SetB( 255 - pix.GetB() );
+					}
+					temp.PutPixel( x,y,pix );
+				}
+			}
+			drawSurf.LightCopyInto( temp );
+		}
+		else
+		{
+			drawSurf.LightCopyInto( layers[i] );
+		}
 	}
 	drawSurf = drawSurf.GetExpandedBy( Vei2( scale ) );
 	bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );

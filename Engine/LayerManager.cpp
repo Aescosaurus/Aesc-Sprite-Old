@@ -110,3 +110,16 @@ const std::vector<Surface>& LayerManager::GetLayers() const
 {
 	return( layers );
 }
+
+int LayerManager::GetSelectedLayer() const
+{
+	for( int i = 0; i < int( layers.size() ); ++i )
+	{
+		if( layerButtons[i].IsHovering() )
+		{
+			return( i );
+		}
+	}
+	return( -1 );
+}
+

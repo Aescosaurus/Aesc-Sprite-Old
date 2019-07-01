@@ -46,3 +46,8 @@ const Vei2& Button::GetPos() const
 {
 	return( pos );
 }
+
+bool Button::IsHovering() const
+{
+	return( hovering );
+}
