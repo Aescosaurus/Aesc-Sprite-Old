@@ -19,6 +19,8 @@ public:
 
 	const std::vector<Surface>& GetLayers() const;
 	const std::vector<bool>& GetHiddenLayers() const;
+	const std::vector<bool>& GetLockedLayers() const;
+	bool IsSelectedLayerLocked() const;
 	// Returns layer you're hovering.
 	int GetSelectedLayer() const;
 	int GetActualSelectedLayer() const;
@@ -31,7 +33,10 @@ private:
 	std::vector<Button> layerButtons;
 	std::vector<Button> hideLayerButtons;
 	std::vector<Button> unhideLayerButtons;
-	std::vector<bool> hiddenLayers; // true = hidden
+	std::vector<bool> hiddenLayers; // true = hidden.
+	std::vector<Button> lockLayerButtons;
+	std::vector<Button> unlockLayerButtons;
+	std::vector<bool> lockLayers; // true = locked.
 	int selectedLayer = 0;
 
 	const RectI drawArea;

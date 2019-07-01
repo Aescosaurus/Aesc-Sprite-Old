@@ -11,24 +11,35 @@ LayerManager::LayerManager( const RectI& clipArea,const Vei2& canvSize )
 	layers.emplace_back( Surface{ canvSize.x,canvSize.y } );
 	layers.back().DrawRect( 0,0,canvSize.x,canvSize.y,Colors::Magenta );
 
-	const auto start = Vei2{ drawArea.left + padding.x * 2 + buttonSize.x,
+	const auto layerButtonStart = Vei2{ drawArea.left + padding.x * 3 + buttonSize.x * 2,
 		drawArea.top + padding.y };
-	const auto start2 = Vei2{ drawArea.left + padding.x,
+	const auto hideStart = Vei2{ drawArea.left + padding.x,
+		drawArea.top + padding.y };
+	const auto lockStart = Vei2{ drawArea.left + padding.x * 2 + buttonSize.x,
 		drawArea.top + padding.y };
 	for( int i = 0; i < 7; ++i )
 	{
 		layerButtons.emplace_back( Button{ Surface{ Surface{
 			"Icons/LayerButton.bmp" },Vei2{ 3,3 } },
-			start + ( padding.Y() + buttonSize.Y() ) * i } );
+			layerButtonStart + ( padding.Y() + buttonSize.Y() ) * i } );
 
 		hideLayerButtons.emplace_back( Button{ Surface{ Surface{
 			"Icons/HideLayerButton.bmp" },Vei2{ 3,3 } },
-			start2 + ( padding.Y() + buttonSize.Y() ) * i } );
+			hideStart + ( padding.Y() + buttonSize.Y() ) * i } );
 		unhideLayerButtons.emplace_back( Button{ Surface{ Surface{
 			"Icons/UnhideLayerButton.bmp" },Vei2{ 3,3 } },
-			start2 + ( padding.Y() + buttonSize.Y() ) * i } );
+			hideStart + ( padding.Y() + buttonSize.Y() ) * i } );
 
 		hiddenLayers.emplace_back( false );
+
+		lockLayerButtons.emplace_back( Button{ Surface{ Surface{
+			"Icons/LockLayerButton.bmp" },Vei2{ 3,3 } },
+			lockStart + ( padding.Y() + buttonSize.Y() ) * i } );
+		unlockLayerButtons.emplace_back( Button{ Surface{ Surface{
+			"Icons/UnlockLayerButton.bmp" },Vei2{ 3,3 } },
+			lockStart + ( padding.Y() + buttonSize.Y() ) * i } );
+
+		lockLayers.emplace_back( false );
 	}
 }
 
@@ -99,26 +110,44 @@ bool LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 				return( true );
 			}
 		}
+
+		if( !lockLayers[i] )
+		{
+			if( lockLayerButtons[i].Update( mouse ) )
+			{
+				lockLayers[i] = true;
+				return( true );
+			}
+		}
+		else
+		{
+			if( unlockLayerButtons[i].Update( mouse ) )
+			{
+				lockLayers[i] = false;
+				return( true );
+			}
+		}
 	}
 	return( false );
 }
 
 void LayerManager::Draw( Graphics& gfx ) const
 {
-	// TODO: Remove this ----------------------------------
 	gfx.DrawRect( drawArea.left,drawArea.top,
 		drawArea.GetWidth(),drawArea.GetHeight(),
 		Colors::DarkGray );
-	// ----------------------------------------------------
 	
 	for( int i = 0; i < int( layers.size() ); ++i )
 	{
-		if( i == selectedLayer )
+		const int layerHeight = buttonSize.y + padding.y;
+		if( lockLayers[i] )
 		{
-			// gfx.DrawSprite( layerButtons[i].GetPos().x + 27 * 3 + 5,
-			// 	layerButtons[i].GetPos().y,layerSelectedButton,
-			// 	SpriteEffect::Chroma{ Colors::Magenta } );
-			const int layerHeight = buttonSize.y + padding.y;
+			gfx.DrawRect( drawArea.left,drawArea.top +
+				( layerHeight * i ) + 3,drawArea.GetWidth(),
+				layerHeight + padding.y - 6,Colors::Gray );
+		}
+		else if( i == selectedLayer )
+		{
 			gfx.DrawRect( drawArea.left,drawArea.top +
 				( layerHeight * i ) + 3,drawArea.GetWidth(),
 				layerHeight + padding.y - 6,Colors::White );
@@ -128,6 +157,9 @@ void LayerManager::Draw( Graphics& gfx ) const
 
 		if( !hiddenLayers[i] ) hideLayerButtons[i].Draw( gfx );
 		else unhideLayerButtons[i].Draw( gfx );
+
+		if( !lockLayers[i] ) lockLayerButtons[i].Draw( gfx );
+		else unlockLayerButtons[i].Draw( gfx );
 
 		const float ratio = float( layers[i].GetWidth() ) /
 			float( layers[i].GetHeight() );
@@ -141,7 +173,7 @@ void LayerManager::Draw( Graphics& gfx ) const
 
 		gfx.DrawSprite( layerButtons[i].GetPos().x + 3,
 			layerButtons[i].GetPos().y + 3,layers[i]
-			.GetInterpolatedTo( width,height ),
+			.GetInterpolatedTo( int( width ),int( height ) ),
 			SpriteEffect::Copy{} );
 	}
 
@@ -182,6 +214,16 @@ const std::vector<Surface>& LayerManager::GetLayers() const
 const std::vector<bool>& LayerManager::GetHiddenLayers() const
 {
 	return( hiddenLayers );
+}
+
+const std::vector<bool>& LayerManager::GetLockedLayers() const
+{
+	return( lockLayers );
+}
+
+bool LayerManager::IsSelectedLayerLocked() const
+{
+	return( lockLayers[selectedLayer] );
 }
 
 int LayerManager::GetSelectedLayer() const

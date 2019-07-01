@@ -314,6 +314,7 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		art != oldArt || isHoveringLayer || hoveringLastFrame ||
 		willUpdate )
 	{
+		if( layerManager.IsSelectedLayerLocked() ) art = oldArt;
 		if( isHoveringLayer ) hoveringLastFrame = true;
 		else hoveringLastFrame = false;
 		UpdateArt();
