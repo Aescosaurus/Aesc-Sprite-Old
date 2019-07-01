@@ -113,14 +113,18 @@ void LayerManager::Draw( Graphics& gfx ) const
 	
 	for( int i = 0; i < int( layers.size() ); ++i )
 	{
-		layerButtons[i].Draw( gfx );
-
 		if( i == selectedLayer )
 		{
-			gfx.DrawSprite( layerButtons[i].GetPos().x + 27 * 3 + 5,
-				layerButtons[i].GetPos().y,layerSelectedButton,
-				SpriteEffect::Chroma{ Colors::Magenta } );
+			// gfx.DrawSprite( layerButtons[i].GetPos().x + 27 * 3 + 5,
+			// 	layerButtons[i].GetPos().y,layerSelectedButton,
+			// 	SpriteEffect::Chroma{ Colors::Magenta } );
+			const int layerHeight = buttonSize.y + padding.y;
+			gfx.DrawRect( drawArea.left,drawArea.top +
+				( layerHeight * i ) + 3,drawArea.GetWidth(),
+				layerHeight + padding.y - 6,Colors::White );
 		}
+
+		layerButtons[i].Draw( gfx );
 
 		if( !hiddenLayers[i] ) hideLayerButtons[i].Draw( gfx );
 		else unhideLayerButtons[i].Draw( gfx );
