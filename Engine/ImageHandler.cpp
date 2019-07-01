@@ -623,6 +623,9 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 Surface ImageHandler::GetLayeredArt() const
 {
 	auto temp = Surface{ art.GetWidth(),art.GetHeight() };
+	temp.DrawRect( 0,0,
+		temp.GetWidth(),temp.GetHeight(),
+		Colors::Magenta );
 	const auto& layers = layerManager.GetLayers();
 	for( int i = 0; i < int( layers.size() ); ++i )
 	{
