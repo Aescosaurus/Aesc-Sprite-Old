@@ -57,6 +57,8 @@ public:
 
 	bool operator!=( const Surface& rhs ) const
 	{
+		if( width != rhs.width || height != rhs.height ) return( false );
+
 		for( int i = 0; i < int( pixels.size() ); ++i )
 		{
 			if( pixels[i] != rhs.pixels[i] )

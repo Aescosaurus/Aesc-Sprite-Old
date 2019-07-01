@@ -249,8 +249,8 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		if( mouse.LeftIsPressed() )
 		{
 			const Vei2 pixelSize = Vei2( Vec2{
-				( float( canvSize.x ) * scale.x ) / float( canvSize.x ),
-				( float( canvSize.y ) * scale.y ) / float( canvSize.y ) } );
+				( int( canvSize.x ) * scale.x ) / int( canvSize.x ),
+				( int( canvSize.y ) * scale.y ) / int( canvSize.y ) } );
 
 			appliedCrop = false;
 			if( canCrop )
@@ -302,6 +302,8 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 
 			artPos.x = float( cropStart.x );
 			artPos.y = float( cropStart.y );
+
+			UpdateArt();
 		}
 	}
 

@@ -128,6 +128,21 @@ void LayerManager::Draw( Graphics& gfx ) const
 
 		if( !hiddenLayers[i] ) hideLayerButtons[i].Draw( gfx );
 		else unhideLayerButtons[i].Draw( gfx );
+
+		const float ratio = float( layers[i].GetWidth() ) /
+			float( layers[i].GetHeight() );
+		float width = ratio * float( 18 );
+		float height = 18;
+		if( width > 25 * 3 )
+		{
+			width = 25 * 3;
+			height = width / ratio;
+		}
+
+		gfx.DrawSprite( layerButtons[i].GetPos().x + 3,
+			layerButtons[i].GetPos().y + 3,layers[i]
+			.GetInterpolatedTo( width,height ),
+			SpriteEffect::Copy{} );
 	}
 
 	addLayer.Draw( gfx );
