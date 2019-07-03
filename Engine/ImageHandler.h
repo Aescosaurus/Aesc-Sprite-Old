@@ -72,10 +72,17 @@ private:
 	const Surface miniResizer = { Surface{ "Icons/MiniResizer.bmp" },Vei2{ 3,3 } };
 	const Surface miniRuler = { Surface{ "Icons/MiniRuler.bmp" },Vei2{ 3,3 } };
 	const Surface miniPointer = { Surface{ "Icons/MiniPointer.bmp" },Vei2{ 3,3 } };
+	const Surface miniSelector = { Surface{ "Icons/MiniSelector.bmp" },Vei2{ 3,3 } };
 
 	const Font luckyPixel = "Fonts/LuckyPixel24x36.bmp";
 
 	LayerManager layerManager; // How creative.
 	bool hoveringLastFrame = false;
 	RectI selectedLayerRect = { -1,-1,-1,-1 };
+
+	Vei2 selectStart = { 0,0 };
+	bool canSelect = false;
+	Vei2 selectEnd = { 0,0 };
+	bool appliedSelect = true;
+	RectI selectorRect = { -1,-1,-1,-1 };
 };

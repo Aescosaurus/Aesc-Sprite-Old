@@ -307,6 +307,61 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		}
 	}
 
+	if( curTool == ToolMode::Selector )
+	{
+		if( mouse.LeftIsPressed() )
+		{
+			const Vei2 pixelSize = Vei2( Vec2{
+				( int( canvSize.x ) * scale.x ) / int( canvSize.x ),
+				( int( canvSize.y ) * scale.y ) / int( canvSize.y ) } );
+
+			appliedSelect = false;
+			if( canSelect )
+			{
+				selectStart = mouse.GetPos();
+				while( selectStart.x % pixelSize.x != 0 ) --selectStart.x;
+				while( selectStart.y % pixelSize.y != 0 ) --selectStart.y;
+
+				canSelect = false;
+			}
+
+			selectEnd = mouse.GetPos();
+			while( selectEnd.x % pixelSize.x != 0 ) --selectEnd.x;
+			while( selectEnd.y % pixelSize.y != 0 ) --selectEnd.y;
+
+			if( kbd.KeyIsPressed( VK_SHIFT ) )
+			{
+				RectI resizeArea = { selectStart.x,selectEnd.x,
+					selectStart.y,selectEnd.y };
+				if( resizeArea.GetWidth() != resizeArea.GetHeight() )
+				{
+					resizeArea.Squareize();
+					selectEnd.x = resizeArea.right;
+					selectEnd.y = resizeArea.bottom;
+					while( selectEnd.x % pixelSize.x != 0 ) --selectEnd.x;
+					while( selectEnd.y % pixelSize.y != 0 ) --selectEnd.y;
+				}
+			}
+
+			selectorRect = RectI{ selectStart.x,selectEnd.x,
+				selectStart.y,selectEnd.y };
+		}
+		else
+		{
+			canSelect = true;
+		}
+	}
+
+	// if( !mouse.LeftIsPressed() && !appliedSelect )
+	// {
+	// 	appliedSelect = true;
+	// 
+	// 	RectI resizeArea = { selectStart.x,selectEnd.x,
+	// 		selectStart.y,selectEnd.y };
+	// 
+	// 	resizeArea.FloatDivide( Vei2( scale ) );
+	// }
+
 	const bool willUpdate = layerManager.Update( kbd,mouse,art );
 	const bool isHoveringLayer = layerManager.GetSelectedLayer() != -1;
 
@@ -344,6 +399,15 @@ void ImageHandler::Draw( Graphics& gfx ) const
 	{
 		gfx.DrawHitboxCorners( selectedLayerRect
 			.GetMovedBy( drawPos ),Colors::Gray );
+	}
+
+	if( selectorRect.left != -1 &&
+		selectorRect.right != -1 &&
+		selectorRect.top != -1 &&
+		selectorRect.bottom != -1 )
+	{
+		gfx.DrawHitboxCorners( selectorRect
+			.GetMovedBy( drawPos ),Colors::LightGray );
 	}
 
 	// Guidelines stuff.
@@ -619,6 +683,10 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 			}
 
 			gfx.DrawSprite( mousePos.x,mousePos.y,miniRuler,
+				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
+			break;
+		case ToolMode::Selector:
+			gfx.DrawSprite( mousePos.x,mousePos.y,miniSelector,
 				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
 			break;
 		}
