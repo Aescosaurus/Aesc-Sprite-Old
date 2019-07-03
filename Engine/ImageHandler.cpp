@@ -545,6 +545,8 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 		return( RectI{ -9999,-9999,-9999,-9999 } );
 	};
 
+	const auto mousePos = mouse.GetPos();
+
 	const Color cursorCol = art.GetExpandedBy( scale )
 		.GetRect().GetMovedBy( artPos ).ContainsPoint( mousePos )
 		? Colors::DarkGray : Colors::LightGray;
