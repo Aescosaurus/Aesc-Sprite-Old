@@ -52,4 +52,8 @@ private:
 		drawArea.bottom - padding.y - buttonSize.y } };
 
 	const Surface layerSelectedButton = Surface{ Surface{ "Icons/LayerSelectButton.bmp" },Vei2{ 3,3 } };
+
+	bool canCreateLayer = false;
+	bool canDupeLayer = false;
+	bool canDeleteLayer = false;
 };

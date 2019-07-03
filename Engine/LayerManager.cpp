@@ -51,19 +51,22 @@ bool LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 		( kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'N' ) ) )
 	{
-		if( layers.size() < 7 )
+		if( layers.size() < 7 && canCreateLayer )
 		{
 			layers.emplace_back( Surface{ canvSize.x,canvSize.y } );
 			layers.back().DrawRect( 0,0,canvSize.x,canvSize.y,Colors::Magenta );
 			selectedLayer = int( layers.size() ) - 1;
 			art.CopyInto( layers[selectedLayer] );
 		}
+		canCreateLayer = false;
 	}
+	else canCreateLayer = true;
+
 	if( dupeLayer.Update( mouse ) ||
 		( kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'J' ) ) )
 	{
-		if( layers.size() < 7 )
+		if( layers.size() < 7 && canDupeLayer )
 		{
 			// layers.push_back( layers.back() );
 			// ++selectedLayer;
@@ -71,11 +74,14 @@ bool LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 			selectedLayer = int( layers.size() ) - 1;
 			art.CopyInto( layers[selectedLayer] );
 		}
+		canDupeLayer = false;
 	}
+	else canDupeLayer = true;
+
 	if( removeLayer.Update( mouse ) ||
 		kbd.KeyIsPressed( VK_DELETE ) )
 	{
-		if( layers.size() > 1 )
+		if( layers.size() > 1 && canDeleteLayer )
 		{
 			// layers.pop_back();
 			layers.erase( layers.begin() + selectedLayer );
@@ -84,7 +90,9 @@ bool LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 			if( selectedLayer > int( layers.size() ) ) selectedLayer = int( layers.size() );
 			art.CopyInto( layers[selectedLayer] );
 		}
+		canDeleteLayer = false;
 	}
+	else canDeleteLayer = true;
 
 	for( int i = 0; i < int( layers.size() ); ++i )
 	{
