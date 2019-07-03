@@ -341,6 +341,14 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		}
 		else
 		{
+			if( selectEnd.x < selectStart.x )
+			{
+				std::swap( selectStart.x,selectEnd.x );
+			}
+			if( selectEnd.y < selectStart.y )
+			{
+				std::swap( selectStart.y,selectEnd.y );
+			}
 			canSelect = true;
 		}
 	}
