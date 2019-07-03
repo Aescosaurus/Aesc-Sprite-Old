@@ -10,15 +10,18 @@ ToolHandler::ToolHandler( ToolMode& tool )
 void ToolHandler::Update( const Mouse& mouse,
 	const Keyboard& kbd,Color& main,Color& off )
 {
-	if( kbd.KeyIsPressed( 'B' ) ) tool = ToolMode::Brush;
-	if( kbd.KeyIsPressed( 'E' ) ) tool = ToolMode::Eraser;
-	if( kbd.KeyIsPressed( 'H' ) ) tool = ToolMode::Hand;
-	if( kbd.KeyIsPressed( 'Z' ) ) tool = ToolMode::Zoomer;
-	if( kbd.KeyIsPressed( 'G' ) ) tool = ToolMode::Bucket;
-	if( kbd.KeyIsPressed( 'I' ) ) tool = ToolMode::Sampler;
-	if( kbd.KeyIsPressed( 'C' ) ) tool = ToolMode::Resizer;
-	if( kbd.KeyIsPressed( 'R' ) ) tool = ToolMode::Ruler;
-	if( kbd.KeyIsPressed( 'M' ) ) tool = ToolMode::Selector;
+	if( !kbd.KeyIsPressed( VK_CONTROL ) )
+	{
+		if( kbd.KeyIsPressed( 'B' ) ) tool = ToolMode::Brush;
+		if( kbd.KeyIsPressed( 'E' ) ) tool = ToolMode::Eraser;
+		if( kbd.KeyIsPressed( 'H' ) ) tool = ToolMode::Hand;
+		if( kbd.KeyIsPressed( 'Z' ) ) tool = ToolMode::Zoomer;
+		if( kbd.KeyIsPressed( 'G' ) ) tool = ToolMode::Bucket;
+		if( kbd.KeyIsPressed( 'I' ) ) tool = ToolMode::Sampler;
+		if( kbd.KeyIsPressed( 'C' ) ) tool = ToolMode::Resizer;
+		if( kbd.KeyIsPressed( 'R' ) ) tool = ToolMode::Ruler;
+		if( kbd.KeyIsPressed( 'M' ) ) tool = ToolMode::Selector;
+	}
 
 	if( kbd.KeyIsPressed( 'X' ) )
 	{
