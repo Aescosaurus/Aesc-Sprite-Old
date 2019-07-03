@@ -83,6 +83,5 @@ private:
 	Vei2 selectStart = { 0,0 };
 	bool canSelect = false;
 	Vei2 selectEnd = { 0,0 };
-	bool appliedSelect = true;
-	// RectI selectorRect = { -1,-1,-1,-1 };
+	bool selectingStuff = false;
 };
