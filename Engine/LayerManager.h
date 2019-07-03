@@ -15,6 +15,7 @@ public:
 	void Draw( Graphics& gfx ) const;
 
 	void ResizeCanvas( const Vei2& newSize );
+	// Creates a new layer above the current one and copies art into it.
 	void CreateNewLayer( Surface& art );
 
 	const std::vector<Surface>& GetLayers() const;

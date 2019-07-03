@@ -358,6 +358,27 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 	{
 		selectingStuff = false;
 	}
+	if( selectingStuff &&
+		kbd.KeyIsPressed( VK_CONTROL ) &&
+		kbd.KeyIsPressed( 'C' ) )
+	{
+		clipboard = art.GetCropped( selectStart,selectEnd );
+		clipboardPos = selectStart;
+	}
+	if( clipboard.GetWidth() > 0 && clipboard.GetHeight() > 0 &&
+		kbd.KeyIsPressed( VK_CONTROL ) &&
+		kbd.KeyIsPressed( 'V' ) )
+	{
+		if( canPaste )
+		{
+			layerManager.CreateNewLayer( art );
+			art.DrawRect( 0,0,art.GetWidth(),art.GetHeight(),
+				Colors::Magenta );
+			art.CopyIntoPos( clipboard,clipboardPos );
+		}
+		canPaste = false;
+	}
+	else canPaste = true;
 
 	// if( !mouse.LeftIsPressed() && !appliedSelect )
 	// {

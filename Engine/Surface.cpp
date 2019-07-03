@@ -229,6 +229,20 @@ void Surface::Resize( const Vei2& newSize )
 	// }
 }
 
+void Surface::CopyIntoPos( const Surface& other,const Vei2& pos )
+{
+	const int minWidth = std::min( width,pos.x + other.width );
+	const int minHeight = std::min( height,pos.y + other.height );
+
+	for( int y = pos.y; y < minHeight; ++y )
+	{
+		for( int x = pos.x; x < minWidth; ++x )
+		{
+			PutPixel( x,y,other.GetPixel( x - pos.x,y - pos.y ) );
+		}
+	}
+}
+
 Color Surface::GetPixel( int x,int y ) const
 {
 	assert( x >= 0 );
@@ -430,6 +444,22 @@ Surface Surface::GetClipped( const RectI& clip ) const
 	}
 
 	return( clipped );
+}
+
+Surface Surface::GetCropped( const Vei2& cropStart,const Vei2& cropEnd )
+{
+	Surface temp{ cropEnd.x - cropStart.x,cropEnd.y - cropStart.y };
+
+	for( int y = cropStart.y; y < cropEnd.y; ++y )
+	{
+		for( int x = cropStart.x; x < cropEnd.x; ++x )
+		{
+			temp.PutPixel( x - cropStart.x,y - cropStart.y,
+				GetPixel( x,y ) );
+		}
+	}
+
+	return( temp );
 }
 
 const std::vector<Color>& Surface::GetRawPixelData() const

@@ -84,4 +84,7 @@ private:
 	bool canSelect = false;
 	Vei2 selectEnd = { 0,0 };
 	bool selectingStuff = false;
+	Surface clipboard = { 0,0 };
+	Vei2 clipboardPos = { 0,0 };
+	bool canPaste = false;
 };

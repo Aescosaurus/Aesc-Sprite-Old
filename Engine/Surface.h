@@ -34,6 +34,8 @@ public:
 	// Copies other surf's pixels into my magenta pixels.
 	void LightCopyInto( const Surface& other );
 	void Resize( const Vei2& newSize );
+	// Copies other surf into this one at specified pos.
+	void CopyIntoPos( const Surface& other,const Vei2& pos );
 
 	Color GetPixel( int x,int y ) const;
 	int GetWidth() const;
@@ -52,6 +54,8 @@ public:
 	Surface GetYReversed() const;
 	// Get a clipped area from a surface.
 	Surface GetClipped( const RectI& clip ) const;
+	// Get the cropped area of a surface.
+	Surface GetCropped( const Vei2& cropStart,const Vei2& cropEnd );
 
 	const std::vector<Color>& GetRawPixelData() const;
 
