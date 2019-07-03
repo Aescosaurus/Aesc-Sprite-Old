@@ -53,9 +53,10 @@ bool LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 	{
 		if( layers.size() < 7 && canCreateLayer )
 		{
-			layers.emplace_back( Surface{ canvSize.x,canvSize.y } );
-			layers.back().DrawRect( 0,0,canvSize.x,canvSize.y,Colors::Magenta );
-			selectedLayer = int( layers.size() ) - 1;
+			// layers.emplace_back( Surface{ canvSize.x,canvSize.y } );
+			layers.insert( layers.begin(),Surface{ canvSize.x,canvSize.y } );
+			layers.front().DrawRect( 0,0,canvSize.x,canvSize.y,Colors::Magenta );
+			selectedLayer = 0;
 			art.CopyInto( layers[selectedLayer] );
 		}
 		canCreateLayer = false;
@@ -68,10 +69,10 @@ bool LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 	{
 		if( layers.size() < 7 && canDupeLayer )
 		{
-			// layers.push_back( layers.back() );
-			// ++selectedLayer;
-			layers.emplace_back( Surface{ layers[selectedLayer] } );
-			selectedLayer = int( layers.size() ) - 1;
+			// layers.emplace_back( Surface{ layers[selectedLayer] } );
+			layers.insert( layers.begin() + selectedLayer,
+				Surface{ layers[selectedLayer] } );
+			selectedLayer;
 			art.CopyInto( layers[selectedLayer] );
 		}
 		canDupeLayer = false;
@@ -207,10 +208,14 @@ void LayerManager::CreateNewLayer( Surface& art )
 {
 	if( layers.size() < 7 )
 	{
+		const auto oldSelectedLayer = selectedLayer;
 		layers.emplace_back( Surface{ canvSize.x,canvSize.y } );
 		layers.back().DrawRect( 0,0,canvSize.x,canvSize.y,Colors::Magenta );
-		selectedLayer = int( layers.size() ) - 1;
+		selectedLayer = 0;
 		art.CopyInto( layers[selectedLayer] );
+
+		std::swap( layers[selectedLayer],layers[oldSelectedLayer] );
+		selectedLayer = oldSelectedLayer;
 	}
 }
 
