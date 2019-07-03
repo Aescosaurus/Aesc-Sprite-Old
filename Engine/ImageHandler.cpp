@@ -311,23 +311,31 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 	{
 		if( mouse.LeftIsPressed() )
 		{
-			const Vei2 pixelSize = Vei2( Vec2{
-				( int( canvSize.x ) * scale.x ) / int( canvSize.x ),
-				( int( canvSize.y ) * scale.y ) / int( canvSize.y ) } );
+			// const Vei2 pixelSize = Vei2( Vec2{
+			// 	( int( canvSize.x ) * scale.x ) / int( canvSize.x ),
+			// 	( int( canvSize.y ) * scale.y ) / int( canvSize.y ) } );
 
 			appliedSelect = false;
 			if( canSelect )
 			{
+				// selectStart = mouse.GetPos();
+				// while( selectStart.x % pixelSize.x != 0 ) --selectStart.x;
+				// while( selectStart.y % pixelSize.y != 0 ) --selectStart.y;
 				selectStart = mouse.GetPos();
-				while( selectStart.x % pixelSize.x != 0 ) --selectStart.x;
-				while( selectStart.y % pixelSize.y != 0 ) --selectStart.y;
+				selectStart -= Vei2( artPos );
+				selectStart.x /= int( scale.x );
+				selectStart.y /= int( scale.y );
 
 				canSelect = false;
 			}
 
+			// selectEnd = mouse.GetPos();
+			// while( selectEnd.x % pixelSize.x != 0 ) --selectEnd.x;
+			// while( selectEnd.y % pixelSize.y != 0 ) --selectEnd.y;
 			selectEnd = mouse.GetPos();
-			while( selectEnd.x % pixelSize.x != 0 ) --selectEnd.x;
-			while( selectEnd.y % pixelSize.y != 0 ) --selectEnd.y;
+			selectEnd -= Vei2( artPos );
+			selectEnd.x /= int( scale.x );
+			selectEnd.y /= int( scale.y );
 
 			if( kbd.KeyIsPressed( VK_SHIFT ) )
 			{
@@ -338,13 +346,10 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 					resizeArea.Squareize();
 					selectEnd.x = resizeArea.right;
 					selectEnd.y = resizeArea.bottom;
-					while( selectEnd.x % pixelSize.x != 0 ) --selectEnd.x;
-					while( selectEnd.y % pixelSize.y != 0 ) --selectEnd.y;
+					// while( selectEnd.x % pixelSize.x != 0 ) --selectEnd.x;
+					// while( selectEnd.y % pixelSize.y != 0 ) --selectEnd.y;
 				}
 			}
-
-			selectorRect = RectI{ selectStart.x,selectEnd.x,
-				selectStart.y,selectEnd.y };
 		}
 		else
 		{
@@ -401,14 +406,16 @@ void ImageHandler::Draw( Graphics& gfx ) const
 			.GetMovedBy( drawPos ),Colors::Gray );
 	}
 
-	if( selectorRect.left != -1 &&
-		selectorRect.right != -1 &&
-		selectorRect.top != -1 &&
-		selectorRect.bottom != -1 )
-	{
-		gfx.DrawHitboxCorners( selectorRect
-			.GetMovedBy( drawPos ),Colors::LightGray );
-	}
+	// const RectI selectorRect = {
+	// 	selectStart.x * int( scale.x ) + int( artPos.x ),
+	// 	selectEnd.x * int( scale.x ) + int( artPos.x ),
+	// 	selectStart.y * int( scale.y ) + int( artPos.x ),
+	// 	selectEnd.y * int( scale.y ) + int( artPos.y ) };
+	RectI selectorRect = { selectStart.x,selectEnd.x,
+		selectStart.y,selectEnd.y };
+	selectorRect = selectorRect.GetExpandedByScale( Vei2( scale ) );
+	selectorRect.MoveBy( Vei2( artPos ) );
+	gfx.DrawHitboxCorners( selectorRect,Colors::MediumDarkGray );
 
 	// Guidelines stuff.
 	const auto clipTop = float( clipArea.top );
