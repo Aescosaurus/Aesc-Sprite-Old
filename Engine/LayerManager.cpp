@@ -93,6 +93,21 @@ bool LayerManager::Update( const Keyboard& kbd,const Mouse& mouse,Surface& art )
 	}
 	else canDeleteLayer = true;
 
+	if( mergeLayer.Update( mouse ) ||
+		( kbd.KeyIsPressed( VK_CONTROL ) &&
+			kbd.KeyIsPressed( 'E' ) ) )
+	{
+		if( selectedLayer < int( layers.size() ) - 1 && canMergeLayer )
+		{
+			layers[selectedLayer].LightCopyInto( layers[selectedLayer + 1] );
+
+			layers.erase( layers.begin() + selectedLayer + 1 );
+			art.CopyInto( layers[selectedLayer] );
+		}
+		canMergeLayer = false;
+	}
+	else canMergeLayer = true;
+
 	for( int i = 0; i < int( layers.size() ); ++i )
 	{
 		if( layerButtons[i].Update( mouse ) )
@@ -187,6 +202,7 @@ void LayerManager::Draw( Graphics& gfx ) const
 	addLayer.Draw( gfx );
 	dupeLayer.Draw( gfx );
 	removeLayer.Draw( gfx );
+	mergeLayer.Draw( gfx );
 }
 
 void LayerManager::ResizeCanvas( const Vei2& newSize )

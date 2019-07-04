@@ -51,10 +51,14 @@ private:
 	Button removeLayer = Button{ Surface{ Surface{ "Icons/RemoveLayerButton.bmp" },Vei2{ 3,3 } },
 		Vei2{ drawArea.left + padding.x * 3 + buttonSize.x * 2,
 		drawArea.bottom - padding.y - buttonSize.y } };
+	Button mergeLayer = Button{ Surface{ Surface{ "Icons/MergeLayerButton.bmp" },Vei2{ 3,3 } },
+		Vei2{ drawArea.left + padding.x * 4 + buttonSize.x * 3,
+		drawArea.bottom - padding.y - buttonSize.y } };
 
 	const Surface layerSelectedButton = Surface{ Surface{ "Icons/LayerSelectButton.bmp" },Vei2{ 3,3 } };
 
 	bool canCreateLayer = false;
 	bool canDupeLayer = false;
 	bool canDeleteLayer = false;
+	bool canMergeLayer = false;
 };
