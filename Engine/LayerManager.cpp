@@ -203,6 +203,10 @@ void LayerManager::Draw( Graphics& gfx ) const
 	dupeLayer.Draw( gfx );
 	removeLayer.Draw( gfx );
 	mergeLayer.Draw( gfx );
+
+	// TODO: better selector tool art.
+	// ALSO TODO: pointer tool
+	// ALSO TODO: rearrange tool icons to go pointer,selector,brush,etc
 }
 
 void LayerManager::ResizeCanvas( const Vei2& newSize )
