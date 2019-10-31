@@ -21,6 +21,7 @@ void ToolHandler::Update( const Mouse& mouse,
 		if( kbd.KeyIsPressed( 'C' ) ) tool = ToolMode::Resizer;
 		if( kbd.KeyIsPressed( 'R' ) ) tool = ToolMode::Ruler;
 		if( kbd.KeyIsPressed( 'M' ) ) tool = ToolMode::Selector;
+		if( kbd.KeyIsPressed( 'V' ) ) tool = ToolMode::Pointer;
 	}
 
 	if( kbd.KeyIsPressed( 'X' ) )
@@ -49,6 +50,7 @@ void ToolHandler::Update( const Mouse& mouse,
 	if( resizer.Update( mouse ) ) tool = ToolMode::Resizer;
 	if( ruler.Update( mouse ) ) tool = ToolMode::Ruler;
 	if( selector.Update( mouse ) ) tool = ToolMode::Selector;
+	if( pointer.Update( mouse ) ) tool = ToolMode::Pointer;
 }
 
 void ToolHandler::Draw( Graphics& gfx ) const
@@ -65,6 +67,7 @@ void ToolHandler::Draw( Graphics& gfx ) const
 	resizer.Draw( gfx );
 	ruler.Draw( gfx );
 	selector.Draw( gfx );
+	pointer.Draw( gfx );
 }
 
 const Surface& ToolHandler::GetToolSurf( ToolMode tool ) const
@@ -89,6 +92,8 @@ const Surface& ToolHandler::GetToolSurf( ToolMode tool ) const
 		return( rulerImg );
 	case ToolMode::Selector:
 		return( selectorImg );
+	case ToolMode::Pointer:
+		return( pointerImg );
 	default:
 		assert( false );
 		return( brushImg );

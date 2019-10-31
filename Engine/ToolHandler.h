@@ -30,6 +30,7 @@ private:
 	const Surface resizerImg = { { "Icons/Resizer.bmp" },Vei2{ 3,3 } };
 	const Surface rulerImg = { { "Icons/Ruler.bmp" },Vei2{ 3,3 } };
 	const Surface selectorImg = { { "Icons/Selector.bmp" },Vei2{ 3,3 } };
+	const Surface pointerImg = { { "Icons/Pointer.bmp" },Vei2{ 3,3 } };
 	// Buttons and stuff can go here I guess.
 	Button brush = { brushImg,Vei2{ 55 + 50 * 1,1 } };
 	Button eraser = { eraserImg,Vei2{ 55 + 50 * 2,1 } };
@@ -40,4 +41,5 @@ private:
 	Button resizer = { resizerImg,Vei2{ 55 + 50 * 7,1 } };
 	Button ruler = { rulerImg,Vei2{ 55 + 50 * 8,1 } };
 	Button selector = { selectorImg,Vei2{ 55 + 50 * 9,1 } };
+	Button pointer = { pointerImg,Vei2{ 55 + 50 * 10,1 } };
 };

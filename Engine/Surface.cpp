@@ -208,6 +208,20 @@ void Surface::LightCopyInto( const Surface& other )
 	}
 }
 
+void Surface::LightCopyIntoPos( const Surface& other,const Vei2& pos )
+{
+	for( int y = pos.y; y < pos.y + other.GetHeight(); ++y )
+	{
+		for( int x = pos.x; x < pos.x + other.GetWidth(); ++x )
+		{
+			if( other.GetPixel( x - pos.x,y - pos.y ) != Colors::Magenta )
+			{
+				PutPixel( x,y,other.GetPixel( x - pos.x,y - pos.y ) );
+			}
+		}
+	}
+}
+
 void Surface::Resize( const Vei2& newSize )
 {
 	Surface temp = *this;

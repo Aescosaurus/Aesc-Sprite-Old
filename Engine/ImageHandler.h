@@ -87,4 +87,11 @@ private:
 	Surface clipboard = { 0,0 };
 	Vei2 clipboardPos = { 0,0 };
 	bool canPaste = false;
+
+	bool draggingPointer = false;
+	Vei2 pointerStart = { 0,0 };
+	Vei2 pointerDelta = { 0,0 };
+	Vei2 pointerPos = { 0,0 };
+	Surface pointerMoveClip = { 0,0 };
+	Surface miniPointerMoveClip = { 0,0 };
 };

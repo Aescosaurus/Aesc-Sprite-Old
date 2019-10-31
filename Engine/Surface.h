@@ -33,6 +33,7 @@ public:
 	void CopyInto( const Surface& other );
 	// Copies other surf's pixels into my magenta pixels.
 	void LightCopyInto( const Surface& other );
+	void LightCopyIntoPos( const Surface& other,const Vei2& pos );
 	void Resize( const Vei2& newSize );
 	// Copies other surf into this one at specified pos.
 	void CopyIntoPos( const Surface& other,const Vei2& pos );

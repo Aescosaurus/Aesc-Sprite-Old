@@ -24,6 +24,8 @@ ImageHandler::ImageHandler( const RectI& clipArea,ToolMode& curTool,
 
 	drawSurf = art.GetExpandedBy( Vei2( scale ) );
 	bigPattern = bgPattern.GetExpandedBy( Vei2( scale ) );
+
+	selectEnd = art.GetSize();
 }
 
 void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
@@ -353,6 +355,75 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		}
 	}
 
+	if( curTool == ToolMode::Pointer )
+	{
+		// oldMousePos
+		// clickingLastFrame
+		if( mouse.LeftIsPressed() )
+		{
+			if( !draggingPointer )
+			{
+				draggingPointer = true;
+				pointerStart = mouse.GetPos();
+				pointerDelta = pointerStart - Vei2(
+					( selectStart.x + int( artPos.x ) ) *
+					int( scale.x ),
+					( selectStart.y + int( artPos.y ) ) *
+					int( scale.y ) );
+				pointerDelta = pointerStart - Vei2(
+					selectStart.x * int( scale.x ) + int( artPos.x ),
+					selectStart.y * int( scale.y ) + int( artPos.y ) );
+				miniPointerMoveClip = art.GetClipped( RectI{
+					selectStart,selectEnd } );
+				pointerMoveClip = miniPointerMoveClip
+					.GetExpandedBy( Vei2( scale ) );
+
+				// remove rect from art
+				art.DrawRect( selectStart.x,selectStart.y,
+					selectEnd.x - selectStart.x,
+					selectEnd.y - selectStart.y,
+					Colors::Magenta );
+			}
+			else
+			{
+				pointerPos = mouse.GetPos() - pointerDelta;
+				pointerPos -= Vei2( artPos );
+				pointerPos.x /= int( scale.x );
+				pointerPos.y /= int( scale.y );
+				pointerPos.x *= int( scale.x );
+				pointerPos.y *= int( scale.y );
+				pointerPos += Vei2( artPos );
+
+				const auto pointerClipMovePos = Vei2{
+					( pointerPos.x - int( artPos.x ) ) / int( scale.x ),
+					( pointerPos.y - int( artPos.y ) ) / int( scale.y ) };
+				selectStart = pointerClipMovePos;
+				selectEnd = pointerClipMovePos + Vei2(
+					pointerMoveClip.GetWidth() / int( scale.x ),
+					pointerMoveClip.GetHeight() / int( scale.y ) );
+			}
+		}
+		else if( draggingPointer )
+		{
+			if( selectStart.x >= 0 && selectStart.y >= 0 &&
+				selectStart.x <= art.GetWidth() && selectStart.y <= art.GetHeight() &&
+				selectEnd.x >= 0 && selectEnd.y >= 0 &&
+				selectEnd.x <= art.GetWidth() && selectEnd.y <= art.GetHeight() )
+			{
+				draggingPointer = false;
+
+				const auto pointerClipMovePos = Vei2{
+					( pointerPos.x - int( artPos.x ) ) / int( scale.x ),
+					( pointerPos.y - int( artPos.y ) ) / int( scale.y ) };
+
+				art.LightCopyIntoPos( miniPointerMoveClip,
+					selectStart );
+
+				pointerMoveClip = Surface{ 0,0 };
+			}
+		}
+	}
+
 	if( kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'A' ) )
 	{
@@ -364,9 +435,11 @@ void ImageHandler::Update( const Keyboard& kbd,ToolMode tool,
 		( kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'D' ) ) )
 	{
-		selectingStuff = false;
+		// selectingStuff = false;
+		selectStart = Vei2{ 0,0 };
+		selectEnd = Vei2{ art.GetWidth(),art.GetHeight() };
 	}
-	if( selectingStuff &&
+	if( // selectingStuff &&
 		kbd.KeyIsPressed( VK_CONTROL ) &&
 		kbd.KeyIsPressed( 'C' ) )
 	{
@@ -428,18 +501,18 @@ void ImageHandler::Draw( Graphics& gfx ) const
 		clipArea,drawSurf,
 		SpriteEffect::Chroma{ Colors::Magenta } );
 
-	if( !selectingStuff )
-	{
-		if( selectedLayerRect.left != -1 &&
-			selectedLayerRect.right != -1 &&
-			selectedLayerRect.top != -1 &&
-			selectedLayerRect.bottom != -1 )
-		{
-			gfx.DrawHitboxCorners( selectedLayerRect
-				.GetMovedBy( drawPos ),Colors::Gray );
-		}
-	}
-	else
+	// if( !selectingStuff )
+	// {
+	// 	if( selectedLayerRect.left != -1 &&
+	// 		selectedLayerRect.right != -1 &&
+	// 		selectedLayerRect.top != -1 &&
+	// 		selectedLayerRect.bottom != -1 )
+	// 	{
+	// 		gfx.DrawHitboxCorners( selectedLayerRect
+	// 			.GetMovedBy( drawPos ),Colors::Gray );
+	// 	}
+	// }
+	// else
 	{
 		RectI selectorRect = { selectStart.x,selectEnd.x,
 			selectStart.y,selectEnd.y };
@@ -495,6 +568,16 @@ void ImageHandler::Draw( Graphics& gfx ) const
 					Colors::Cyan );
 			}
 		}
+	}
+
+	if( curTool == ToolMode::Pointer && draggingPointer )
+	{
+		gfx.DrawSprite( pointerPos.x,
+			pointerPos.y,
+			pointerMoveClip.GetRect(),clipArea,
+			pointerMoveClip,
+			SpriteEffect::Chroma{ Colors::Magenta } );
+
 	}
 
 	layerManager.Draw( gfx );
@@ -727,6 +810,9 @@ void ImageHandler::DrawCursor( Graphics& gfx ) const
 			gfx.DrawSprite( mousePos.x,mousePos.y,miniSelector,
 				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
 			break;
+		case ToolMode::Pointer:
+			gfx.DrawSprite( mousePos.x,mousePos.y,miniPointer,
+				SpriteEffect::Substitution( Colors::Magenta,cursorCol ) );
 		}
 	}
 	else

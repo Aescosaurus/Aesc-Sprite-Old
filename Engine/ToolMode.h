@@ -2,7 +2,7 @@
 
 enum class ToolMode
 {
-	// Pointer,
+	Pointer,
 	Selector,
 	Brush,
 	Eraser,
