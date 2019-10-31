@@ -17,6 +17,7 @@ void Canvas::Update( const Keyboard& kbd )
 	if( fMenu.Update( mouse,kbd,imgHand ) )
 	{
 		imgHand.ResizeCanvas( imgHand.GetArt().GetSize() );
+		imgHand.UpdateSelectArea();
 		// imgHand.CreateNewLayer();
 		imgHand.UpdateArt();
 	}

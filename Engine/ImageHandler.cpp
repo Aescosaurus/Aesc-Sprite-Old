@@ -713,6 +713,12 @@ void ImageHandler::CreateNewLayer()
 	layerManager.CreateNewLayer( art );
 }
 
+void ImageHandler::UpdateSelectArea()
+{
+	selectStart = { 0,0 };
+	selectEnd = art.GetSize();
+}
+
 void ImageHandler::DrawCursor( Graphics& gfx ) const
 {
 	const auto DrawSquare = [&]( Color lineColor,Graphics& gfx )

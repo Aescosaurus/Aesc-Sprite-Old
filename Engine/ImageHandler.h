@@ -26,6 +26,7 @@ public:
 	Surface& GetArt();
 	void ResizeCanvas( const Vei2& newSize );
 	void CreateNewLayer();
+	void UpdateSelectArea();
 
 	void DrawCursor( Graphics& gfx ) const;
 	Surface GetLayeredArt() const;
